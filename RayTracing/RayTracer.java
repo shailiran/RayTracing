@@ -1,5 +1,7 @@
 package RayTracing;
 
+import src.*;
+
 import java.awt.Transparency;
 import java.awt.color.*;
 import java.awt.image.*;
@@ -19,6 +21,14 @@ public class RayTracer {
 
 	public int imageWidth;
 	public int imageHeight;
+	Camera camera;
+	Set set;
+	List<Surfaces> surfaces;
+	List<Materials> materials;
+	List<Light> lights;
+	Scene scene;
+
+
 
 	/**
 	 * Runs the ray tracer. Takes scene file, output image file and image size as input.
@@ -91,46 +101,32 @@ public class RayTracer {
 				// Split according to white space characters:
 				String[] params = line.substring(3).trim().toLowerCase().split("\\s+");
 
-				if (code.equals("cam"))
-				{
-                                        // Add code here to parse camera parameters
-
+				if (code.equals("cam")) {
+					camera = new Camera(params);
 					System.out.println(String.format("Parsed camera parameters (line %d)", lineNum));
 				}
-				else if (code.equals("set"))
-				{
-                                        // Add code here to parse general settings parameters
-
+				else if (code.equals("set")) {
+					set = new Set(params);
 					System.out.println(String.format("Parsed general settings (line %d)", lineNum));
 				}
-				else if (code.equals("mtl"))
-				{
-                                        // Add code here to parse material parameters
-
+				else if (code.equals("mtl")) {
+					Materials material = new Materials(params);
+					materials.add(material);
 					System.out.println(String.format("Parsed material (line %d)", lineNum));
 				}
-				else if (code.equals("sph"))
-				{
-                                        // Add code here to parse sphere parameters
-
-                                        // Example (you can implement this in many different ways!):
-					// Sphere sphere = new Sphere();
-                                        // sphere.setCenter(params[0], params[1], params[2]);
-                                        // sphere.setRadius(params[3]);
-                                        // sphere.setMaterial(params[4]);
-
+				else if (code.equals("sph")) {
+					Sphere sphere = new Sphere(params);
+					surfaces.add(sphere);
 					System.out.println(String.format("Parsed sphere (line %d)", lineNum));
 				}
-				else if (code.equals("pln"))
-				{
-                                        // Add code here to parse plane parameters
-
+				else if (code.equals("pln")) {
+					Plane plane = new Plane(params);
+					surfaces.add(plane);
 					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
-				else if (code.equals("lgt"))
-				{
-                                        // Add code here to parse light parameters
-
+				else if (code.equals("lgt")) {
+					Light light = new Light(params);
+					lights.add(light);
 					System.out.println(String.format("Parsed light (line %d)", lineNum));
 				}
 				else
@@ -139,6 +135,9 @@ public class RayTracer {
 				}
 			}
 		}
+		scene = new Scene(camera, set, surfaces, materials, lights);
+		if (!scene.isValid())
+			System.out.println("The scene is not valid!");
 
                 // It is recommended that you check here that the scene is valid,
                 // for example camera settings and all necessary materials were defined.
@@ -157,6 +156,16 @@ public class RayTracer {
 		// Create a byte array to hold the pixel data:
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
+		for (int i = 0; i < imageWidth; i++) {
+			for (int j = 0; j < imageHeight; j++) {
+				Ray ray = constructRayThroughPixel(camera, i, j);
+				Intersection hit = Intersection.findIntersection(ray, scene);
+				image[i][j] = getColor(hit);
+
+
+
+			}
+		}
 
                 // Put your ray tracing code here!
                 //
@@ -220,6 +229,8 @@ public class RayTracer {
 	public static class RayTracerException extends Exception {
 		public RayTracerException(String msg) {  super(msg); }
 	}
+
+
 
 
 }

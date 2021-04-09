@@ -2,10 +2,10 @@ package src;
 import java.lang.Math;
 
 public class Vector {
-    double x;
-    double y;
-    double z;
-    double norm;
+    private double x;
+    private double y;
+    private double z;
+    private double norm;
 
     public Vector(){}
 
@@ -16,17 +16,25 @@ public class Vector {
         this.norm = calcNorm(x,y,z);
     }
 
-    public void setX(double x){
-        this.x = x;
+    public void setX(double x){ this.x = x; }
+
+    public void setY(double y){ this.y = y; }
+
+    public void setZ(double z){ this.z = z; }
+
+    public double getX() {
+        return x;
     }
 
-    public void setY(double y){
-        this.y = y;
+    public double getY() {
+        return y;
     }
 
-    public void setZ(double z){
-        this.z = z;
+    public double getZ() {
+        return z;
     }
+
+
 
 
     private double calcNorm(double x, double y, double z){
@@ -34,6 +42,11 @@ public class Vector {
         sum = Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2) ;
         res = Math.sqrt(sum);
         return res;
+    }
+
+    public Vector subVectors(Vector p) {
+        Vector subVector = new Vector(this.x - p.getX(), this.y - p.getY(), this.z - p.getZ());
+        return subVector;
     }
 
     public double dotProduct (Vector v) {
@@ -58,4 +71,5 @@ public class Vector {
 
        return cross;
     }
+
 }

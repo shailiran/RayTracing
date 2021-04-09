@@ -1,6 +1,6 @@
 package src;
 
-public class Plane {
+public class Plane implements Surfaces {
     private Vector normal;
     private double offset;
     private int materialIndex;
@@ -10,5 +10,11 @@ public class Plane {
                 Double.parseDouble(params[2]));
         this.offset = Double.parseDouble(params[3]);
         this.materialIndex = Integer.parseInt(params[4]);
+    }
+
+    @Override
+    public double intersection(Ray ray) {
+        double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));
+        return t;
     }
 }
