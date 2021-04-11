@@ -124,6 +124,11 @@ public class RayTracer {
 					surfaces.add(plane);
 					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
+				else if(code.equals("box")) {
+					Box box = new Box(params);
+					surfaces.add(box);
+					System.out.println(String.format("Parsed Box (line %d)", lineNum));
+				}
 				else if (code.equals("lgt")) {
 					Light light = new Light(params);
 					lights.add(light);
@@ -230,6 +235,9 @@ public class RayTracer {
 		public RayTracerException(String msg) {  super(msg); }
 	}
 
+	public Ray constructRayThroughPixel (Camera camera, int i, int j) {
+
+	}
 
 
 

@@ -44,9 +44,22 @@ public class Vector {
         return res;
     }
 
-    public Vector subVectors(Vector p) {
-        Vector subVector = new Vector(this.x - p.getX(), this.y - p.getY(), this.z - p.getZ());
+    public Vector subVectors(Vector v) {
+        Vector subVector = new Vector(this.x - v.getX(), this.y - v.getY(), this.z - v.getZ());
         return subVector;
+    }
+
+    public Vector addVectors(Vector v) {
+        Vector addVector = new Vector(this.x + v.getX(), this.y + v.getY(), this.z + v.getZ());
+        return addVector;
+    }
+
+    public Vector normalizeVector() {
+        Vector normalize = new Vector();
+        normalize.setX(this.x / this.norm);
+        normalize.setY(this.y / this.norm);
+        normalize.setZ(this.z / this.norm);
+        return normalize;
     }
 
     public double dotProduct (Vector v) {
