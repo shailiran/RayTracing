@@ -41,9 +41,13 @@ public class Camera {
         return upVector;
     }
 
-    public Vector getTowardsVector() { return towardsVector; }
+    public Vector getTowardsVector() { 
+            return towardsVector; 
+    }
 
-    public Vector getRightVector() { return rightVector; }
+    public Vector getRightVector() { 
+            return rightVector; 
+    }
 
     public double getScreenDistance() {
         return screenDistance;
@@ -56,7 +60,5 @@ public class Camera {
     public boolean isFishEyeLens() {
         return fishEyeLens;
     }
-
-
 
 }
