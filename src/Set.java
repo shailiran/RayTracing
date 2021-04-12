@@ -11,4 +11,8 @@ public class Set {
         this.NumberOfShadowsRays = Integer.parseInt(params[3]);
         this.maxRecursionLevel = Integer.parseInt(params[4]);
     }
+
+    public Color getBackgroundColor(){
+        return this.backgroundColor;
+    }
 }
