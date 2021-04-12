@@ -1,12 +1,14 @@
 package src;
 
 public class Camera {
-    Vector position;
-    Vector lookAtPoint;
-    Vector upVector;
-    double screenDistance;
-    double screenWidth;
-    boolean fishEyeLens;
+    private Vector position;
+    private Vector lookAtPoint;
+    private Vector upVector;
+    private Vector rightVector;
+    private Vector towardsVector;
+    private double screenDistance;
+    private double screenWidth;
+    private boolean fishEyeLens;
 
     public Camera(String[] params) {
         this.position = new Vector(Double.parseDouble(params[0]),Double.parseDouble(params[1]),
@@ -18,6 +20,41 @@ public class Camera {
         this.screenDistance = Double.parseDouble(params[9]);
         this.screenWidth = Double.parseDouble(params[10]);
         this.fishEyeLens = Boolean.parseBoolean(params[11]);
+
+        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
+        this.towardsVector = lookAtPoint.subVectors(position);
+        this.towardsVector.normalizeInPlace();
+        this.rightVector = upVector.crossProduct(towardsVector);
+        this.rightVector.normalizeInPlace();
+        this.upVector = towardsVector.crossProduct(rightVector);
+    }
+
+    public Vector getPosition(){
+        return this.position;
+    }
+
+    public Vector getLookAtPoint() {
+        return this.lookAtPoint;
+    }
+
+    public Vector getUpVector() {
+        return upVector;
+    }
+
+    public Vector getTowardsVector() { return towardsVector; }
+
+    public Vector getRightVector() { return rightVector; }
+
+    public double getScreenDistance() {
+        return screenDistance;
+    }
+
+    public double getScreenWidth() {
+        return screenWidth;
+    }
+
+    public boolean isFishEyeLens() {
+        return fishEyeLens;
     }
 
 

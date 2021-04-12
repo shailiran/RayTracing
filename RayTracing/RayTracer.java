@@ -161,9 +161,27 @@ public class RayTracer {
 		// Create a byte array to hold the pixel data:
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
+		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
+		double pixel = camera.getScreenWidth() / imageWidth;
+		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
+				.multByScalar(camera.getScreenDistance()); //Center = position + towards * distance
+		double g_y = 0.5 * (imageHeight - pixel);
+		double g_x = 0.5 * (imageWidth - pixel);
+		double m = imageHeight / pixel;
+		double k = imageWidth / pixel;
+		double aspectRatio = (m - 1) / (k - 1);
+		Vector q_x = camera.getRightVector().multByScalar((2 * g_x) / (k-1));
+		Vector q_y = camera.getUpVector().multByScalar((2 * g_y) / m - 1);
+		Vector p_11 = (camera.getTowardsVector().multByScalar(camera.getScreenDistance()))
+		.addVectors((camera.getRightVector().multByScalar(g_x)))
+				.subVectors (camera.getUpVector().multByScalar(g_y)); //p_11 = towards * distance + g_x * right - g_y * Up
+
+
 		for (int i = 0; i < imageWidth; i++) {
 			for (int j = 0; j < imageHeight; j++) {
-				Ray ray = constructRayThroughPixel(camera, i, j);
+				Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
+
+				Ray ray = new Ray()
 				Intersection hit = Intersection.findIntersection(ray, scene);
 				image[i][j] = getColor(hit);
 
@@ -238,6 +256,8 @@ public class RayTracer {
 	public Ray constructRayThroughPixel (Camera camera, int i, int j) {
 
 	}
+
+
 
 
 

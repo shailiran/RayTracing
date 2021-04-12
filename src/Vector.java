@@ -54,6 +54,20 @@ public class Vector {
         return addVector;
     }
 
+    public Vector multByScalar(double s) {
+        Vector res = new Vector();
+        res.setX(this.x * s);
+        res.setY(this.y * s);
+        res.setZ(this.z * s);
+        return res;
+    }
+
+    public void normalizeInPlace() {
+        this.setX(this.x / this.norm);
+        this.setY(this.y / this.norm);
+        this.setZ(this.z / this.norm);
+    }
+
     public Vector normalizeVector() {
         Vector normalize = new Vector();
         normalize.setX(this.x / this.norm);
