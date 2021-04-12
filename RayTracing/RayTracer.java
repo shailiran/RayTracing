@@ -28,17 +28,12 @@ public class RayTracer {
 	List<Light> lights;
 	Scene scene;
 
-
-
 	/**
 	 * Runs the ray tracer. Takes scene file, output image file and image size as input.
 	 */
 	public static void main(String[] args) {
-
 		try {
-
 			RayTracer tracer = new RayTracer();
-
                         // Default values:
 			tracer.imageWidth = 500;
 			tracer.imageHeight = 500;
@@ -49,12 +44,10 @@ public class RayTracer {
 			String sceneFileName = args[0];
 			String outputFileName = args[1];
 
-			if (args.length > 3)
-			{
+			if (args.length > 3) {
 				tracer.imageWidth = Integer.parseInt(args[2]);
 				tracer.imageHeight = Integer.parseInt(args[3]);
 			}
-
 
 			// Parse scene file:
 			tracer.parseScene(sceneFileName);
@@ -69,15 +62,12 @@ public class RayTracer {
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
-
 	}
 
 	/**
 	 * Parses the scene file and creates the scene. Change this function so it generates the required objects.
 	 */
-	public void parseScene(String sceneFileName) throws IOException, RayTracerException
-	{
+	public void parseScene(String sceneFileName) throws IOException, RayTracerException {
 		FileReader fr = new FileReader(sceneFileName);
 
 		BufferedReader r = new BufferedReader(fr);
@@ -85,18 +75,14 @@ public class RayTracer {
 		int lineNum = 0;
 		System.out.println("Started parsing scene file " + sceneFileName);
 
-
-
-		while ((line = r.readLine()) != null)
-		{
+		while ((line = r.readLine()) != null) {
 			line = line.trim();
 			++lineNum;
-
-			if (line.isEmpty() || (line.charAt(0) == '#'))  {
+			if (line.isEmpty() || (line.charAt(0) == '#')) {
 				// This line in the scene file is a comment
 				continue;
-			} else
-			{
+			} 
+			else {
 				String code = line.substring(0, 3).toLowerCase();
 				// Split according to white space characters:
 				String[] params = line.substring(3).trim().toLowerCase().split("\\s+");
@@ -141,21 +127,16 @@ public class RayTracer {
 			}
 		}
 		scene = new Scene(camera, set, surfaces, materials, lights);
-		if (!scene.isValid())
+		if (!scene.isValid()) {
 			System.out.println("The scene is not valid!");
-
-                // It is recommended that you check here that the scene is valid,
-                // for example camera settings and all necessary materials were defined.
-
+		}
 		System.out.println("Finished parsing scene file " + sceneFileName);
-
 	}
 
 	/**
 	 * Renders the loaded scene and saves it to the specified file location.
 	 */
-	public void renderScene(String outputFileName)
-	{
+	public void renderScene(String outputFileName) {
 		long startTime = System.currentTimeMillis();
 
 		// Create a byte array to hold the pixel data:
@@ -182,30 +163,45 @@ public class RayTracer {
 		// .addVectors((camera.getRightVector().multByScalar(g_x)))
 		// 		.subVectors (camera.getUpVector().multByScalar(g_y)); //p_11 = towards * distance + g_x * right - g_y * Up
 
+		Vector delta_x = camera.getRightVector().multByScalar(pixel);
+		Vector delta_y = camera.getUpVector().multByScalar(pixel);
+
 		for (int i = 0; i < imageWidth; i++) {
 			for (int j = 0; j < imageHeight; j++) {
 				// Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
-				
-				Vector currentPixel = p_0.addVectors(p_0); // TODO - check the shift!!!!
+
+				// Construct ray through pixel
+				Vector move = delta_y.multByScalar(i).addVectors(delta_x.multByScalar(j));
+				Vector currentPixel = p_0.addVectors(move); 
 				Vector directionVector = currentPixel.subVectors(camera.getPosition());
 				Ray ray = new Ray(currentPixel, directionVector);
 
+				// Find intersection
 				Intersection hit = Intersection.findIntersection(ray, scene);
 				
+				// Color
+				Color color;
+				if (!hit.getHasIntersection()) {
+					// no intersection - need background color
+					color = set.getBackgroundColor();
+				} else {
+					// has intersection
+					
+				}
 
 
 
 			}
 		}
 
-                // Put your ray tracing code here!
-                //
-                // Write pixel color values in RGB format to rgbData:
-                // Pixel [x, y] red component is in rgbData[(y * this.imageWidth + x) * 3]
-                //            green component is in rgbData[(y * this.imageWidth + x) * 3 + 1]
-                //             blue component is in rgbData[(y * this.imageWidth + x) * 3 + 2]
-                //
-                // Each of the red, green and blue components should be a byte, i.e. 0-255
+		// Put your ray tracing code here!
+		//
+		// Write pixel color values in RGB format to rgbData:
+		// Pixel [x, y] red component is in rgbData[(y * this.imageWidth + x) * 3]
+		//            green component is in rgbData[(y * this.imageWidth + x) * 3 + 1]
+		//             blue component is in rgbData[(y * this.imageWidth + x) * 3 + 2]
+		//
+		// Each of the red, green and blue components should be a byte, i.e. 0-255
 
 
 		long endTime = System.currentTimeMillis();
@@ -213,32 +209,25 @@ public class RayTracer {
 
 		System.out.println("Finished rendering scene in " + renderTime.toString() + " milliseconds.");
 
-                // This is already implemented, and should work without adding any code.
+    // This is already implemented, and should work without adding any code.
 		saveImage(this.imageWidth, rgbData, outputFileName);
 
 		System.out.println("Saved file " + outputFileName);
 
 	}
 
-
-
-
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
 
 	/*
 	 * Saves RGB data as an image in png format to the specified location.
 	 */
-	public static void saveImage(int width, byte[] rgbData, String fileName)
-	{
+	public static void saveImage(int width, byte[] rgbData, String fileName) {
 		try {
-
 			BufferedImage image = bytes2RGB(width, rgbData);
 			ImageIO.write(image, "png", new File(fileName));
-
 		} catch (IOException e) {
 			System.out.println("ERROR SAVING FILE: " + e.getMessage());
 		}
-
 	}
 
 	/*
@@ -260,10 +249,5 @@ public class RayTracer {
 	public static class RayTracerException extends Exception {
 		public RayTracerException(String msg) {  super(msg); }
 	}
-
-
-
-
-
 
 }
