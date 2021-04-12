@@ -164,26 +164,34 @@ public class RayTracer {
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 		double pixel = camera.getScreenWidth() / imageWidth;
 		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
-				.multByScalar(camera.getScreenDistance()); //Center = position + towards * distance
-		double g_y = 0.5 * (imageHeight - pixel);
-		double g_x = 0.5 * (imageWidth - pixel);
-		double m = imageHeight / pixel;
-		double k = imageWidth / pixel;
-		double aspectRatio = (m - 1) / (k - 1);
-		Vector q_x = camera.getRightVector().multByScalar((2 * g_x) / (k-1));
-		Vector q_y = camera.getUpVector().multByScalar((2 * g_y) / m - 1);
-		Vector p_11 = (camera.getTowardsVector().multByScalar(camera.getScreenDistance()))
-		.addVectors((camera.getRightVector().multByScalar(g_x)))
-				.subVectors (camera.getUpVector().multByScalar(g_y)); //p_11 = towards * distance + g_x * right - g_y * Up
+				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
+		
+		Vector tmp1 = camera.getRightVector().multByScalar(camera.getScreenWidth() - pixel); // (width - pixel size) * right vector
+		Vector tmp2 = camera.getUpVector().multByScalar(imageHeight - pixel); // (height - pixel size) * Up Vector
+		Vector tmp = (tmp1.addVectors(tmp2)).multByScalar(0.5); // tmp = (tmp1 + tmp2) * 0.5
+		Vector p_0 = screenCenter.subVectors(tmp); // The left top pixel
 
+		// double g_y = 0.5 * (imageHeight - pixel);
+		// double g_x = 0.5 * (imageWidth - pixel);
+		// double m = imageHeight / pixel;
+		// double k = imageWidth / pixel;
+		// double aspectRatio = (m - 1) / (k - 1);
+		// Vector q_x = camera.getRightVector().multByScalar((2 * g_x) / (k-1));
+		// Vector q_y = camera.getUpVector().multByScalar((2 * g_y) / m - 1);
+		// Vector p_11 = (camera.getTowardsVector().multByScalar(camera.getScreenDistance()))
+		// .addVectors((camera.getRightVector().multByScalar(g_x)))
+		// 		.subVectors (camera.getUpVector().multByScalar(g_y)); //p_11 = towards * distance + g_x * right - g_y * Up
 
 		for (int i = 0; i < imageWidth; i++) {
 			for (int j = 0; j < imageHeight; j++) {
-				Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
+				// Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
+				
+				Vector currentPixel = p_0.addVectors(p_0); // TODO - check the shift!!!!
+				Vector directionVector = currentPixel.subVectors(camera.getPosition());
+				Ray ray = new Ray(currentPixel, directionVector);
 
-				Ray ray = new Ray()
 				Intersection hit = Intersection.findIntersection(ray, scene);
-				image[i][j] = getColor(hit);
+				
 
 
 
@@ -253,9 +261,6 @@ public class RayTracer {
 		public RayTracerException(String msg) {  super(msg); }
 	}
 
-	public Ray constructRayThroughPixel (Camera camera, int i, int j) {
-
-	}
 
 
 
