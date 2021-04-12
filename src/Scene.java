@@ -18,6 +18,10 @@ public class Scene {
         this.lights = lights;
     }
 
+    public List<Surfaces> getSurfaces() {
+        return this.surfaces;
+    }
+    
     public boolean isValid() {
         if (camera != null && set != null && surfaces != null
                 && materials != null && lights != null)
