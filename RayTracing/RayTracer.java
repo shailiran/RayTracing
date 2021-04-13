@@ -145,13 +145,17 @@ public class RayTracer {
 
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 		double pixel = camera.getScreenWidth() / imageWidth;
-		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
-				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
-		
-		Vector tmp1 = camera.getRightVector().multByScalar(camera.getScreenWidth() - pixel); // (width - pixel size) * right vector
-		Vector tmp2 = camera.getUpVector().multByScalar(imageHeight - pixel); // (height - pixel size) * Up Vector
-		Vector tmp = (tmp1.addVectors(tmp2)).multByScalar(0.5); // tmp = (tmp1 + tmp2) * 0.5
-		Vector p_0 = screenCenter.subVectors(tmp); // The left top pixel
+		Vector screenCenter = camera.getPosition();
+//		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
+//				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
+//
+//		Vector tmp1 = camera.getRightVector().multByScalar(camera.getScreenWidth() - pixel); // (width - pixel size) * right vector
+//		Vector tmp2 = camera.getUpVector().multByScalar(imageHeight - pixel); // (height - pixel size) * Up Vector
+//		Vector tmp = (tmp1.addVectors(tmp2)).multByScalar(0.5); // tmp = (tmp1 + tmp2) * 0.5
+//		Vector p_0 = screenCenter.subVectors(tmp); // The left top pixel
+
+		Vector p_0 = camera.getPosition();
+
 
 		// double g_y = 0.5 * (imageHeight - pixel);
 		// double g_x = 0.5 * (imageWidth - pixel);
@@ -190,7 +194,7 @@ public class RayTracer {
 //					color.setRed(color.getRed() + tmpColor.getRed());
 //					color.setGreen(color.getGreen() + tmpColor.getGreen());
 //					color.setBlue(color.getBlue() + tmpColor.getBlue());
-					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex());
+					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex()-1);
 					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
 							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
 							material.getReflectionColor().getRed());

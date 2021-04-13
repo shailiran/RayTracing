@@ -24,8 +24,8 @@ public class Camera {
 //        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
         this.towardsVector = lookAtPoint.subVectors(position);
         this.towardsVector.normalizeInPlace();
+        this.upVector = towardsVector.crossProduct(upVector);
         this.upVector.normalizeInPlace();
-        this.upVector = upVector.multByScalar(-1);
         this.rightVector = towardsVector.crossProduct(upVector);
         this.rightVector.normalizeInPlace();
 
