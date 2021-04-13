@@ -1,11 +1,11 @@
 package src;
 
 public class Materials {
-    Color diffuseColor;
-    Color specularColor;
-    Color reflectionColor;
-    double phongSpecularityCoefficient;
-    double transparency;
+    private Color diffuseColor;
+    private Color specularColor;
+    private Color reflectionColor;
+    private double phongSpecularityCoefficient;
+    private double transparency;
 
     public Materials(String[] params) {
         this.diffuseColor = new Color(Double.parseDouble(params[0]), Double.parseDouble(params[1]),
@@ -17,4 +17,26 @@ public class Materials {
         this.phongSpecularityCoefficient = Double.parseDouble(params[9]);
         this.transparency = Double.parseDouble(params[10]);
     }
+
+    public Color getDiffuseColor() {
+        return diffuseColor;
+    }
+
+    public Color getReflectionColor() {
+        return reflectionColor;
+    }
+
+    public Color getSpecularColor() {
+        return specularColor;
+    }
+
+    public double getPhongSpecularityCoefficient() {
+        return phongSpecularityCoefficient;
+    }
+
+    public double getTransparency() {
+        return transparency;
+    }
+
+
 }

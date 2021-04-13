@@ -21,13 +21,15 @@ public class Camera {
         this.screenWidth = Double.parseDouble(params[10]);
         this.fishEyeLens = Boolean.parseBoolean(params[11]);
 
-        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
+//        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
         this.towardsVector = lookAtPoint.subVectors(position);
         this.towardsVector.normalizeInPlace();
-        this.rightVector = upVector.crossProduct(towardsVector);
+        this.upVector.normalizeInPlace();
+        this.upVector = upVector.multByScalar(-1);
+        this.rightVector = towardsVector.crossProduct(upVector);
         this.rightVector.normalizeInPlace();
-        this.upVector = towardsVector.crossProduct(rightVector);
-    }
+
+  }
 
     public Vector getPosition(){
         return this.position;

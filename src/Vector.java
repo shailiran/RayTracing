@@ -56,23 +56,44 @@ public class Vector {
 
     public Vector multByScalar(double s) {
         Vector res = new Vector();
-        res.setX(this.x * s);
-        res.setY(this.y * s);
-        res.setZ(this.z * s);
+        double x = this.x * s;
+        double y = this.y * s;
+        double z = this.z * s;
+        res.setX(x);
+        res.setY(y);
+        res.setZ(z);
+        res.norm = calcNorm(x,y,z);
+
         return res;
     }
 
     public void normalizeInPlace() {
-        this.setX(this.x / this.norm);
-        this.setY(this.y / this.norm);
-        this.setZ(this.z / this.norm);
+        if (this.norm == 0) {
+            this.setX(0);
+            this.setY(0);
+            this.setZ(0);
+            this.norm = 0;
+        } else {
+            this.setX(this.x / this.norm);
+            this.setY(this.y / this.norm);
+            this.setZ(this.z / this.norm);
+            this.norm = 1;
+        }
     }
 
     public Vector normalizeVector() {
         Vector normalize = new Vector();
-        normalize.setX(this.x / this.norm);
-        normalize.setY(this.y / this.norm);
-        normalize.setZ(this.z / this.norm);
+        if (this.norm == 0) {
+            normalize.setX(0);
+            normalize.setY(0);
+            normalize.setZ(0);
+            normalize.norm = 0;
+        } else {
+            normalize.setX(this.x / this.norm);
+            normalize.setY(this.y / this.norm);
+            normalize.setZ(this.z / this.norm);
+            normalize.norm = 1;
+        }
         return normalize;
     }
 
@@ -92,9 +113,13 @@ public class Vector {
     //the next equation is from wikipedia: https://en.wikipedia.org/wiki/Cross_product
     public Vector crossProduct (Vector v) {
        Vector cross = new Vector();
-       cross.setX(this.y*v.z - this.z*v.y);
-       cross.setY(this.z*v.x - this.x*v.z);
-       cross.setZ(this.x*v.y - this.y*v.x);
+       double x = this.y*v.z - this.z*v.y;
+       double y = this.z*v.x - this.x*v.z;
+       double z = this.x*v.y - this.y*v.x;
+       cross.setX(x);
+       cross.setY(y);
+       cross.setZ(z);
+       cross.norm = calcNorm(x, y, z);
 
        return cross;
     }

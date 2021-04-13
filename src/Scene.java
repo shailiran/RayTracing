@@ -29,4 +29,19 @@ public class Scene {
         return false;
     }
 
+    public Set getSet() {
+        return set;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public List<Light> getLights() {
+        return lights;
+    }
+
+    public List<Materials> getMaterials() {
+        return materials;
+    }
 }

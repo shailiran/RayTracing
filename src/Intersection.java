@@ -2,9 +2,9 @@ package src;
 import java.util.List;
 
 public class Intersection {
-    double minT;
-    Surfaces minSurface;
-    boolean hasIntersection;
+    private double minT;
+    private Surfaces minSurface;
+    private boolean hasIntersection;
 
     public Intersection(double minT, Surfaces minSurface, boolean hasIntersection) {
         this.minT = minT;
@@ -12,9 +12,18 @@ public class Intersection {
         this.hasIntersection = hasIntersection;
     }
 
+    public double getMinT() {
+        return minT;
+    }
+
+    public Surfaces getMinSurface() {
+        return minSurface;
+    }
+
     public boolean getHasIntersection() {
         return this.hasIntersection;
     }
+
     public static Intersection findIntersection(Ray ray, Scene scene) {
         double t, minT = Double.MAX_VALUE;
         List<Surfaces> surfaces = scene.getSurfaces();

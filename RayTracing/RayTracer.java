@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import javax.imageio.ImageIO;
 
 /**
@@ -23,9 +24,9 @@ public class RayTracer {
 	public int imageHeight;
 	Camera camera;
 	Set set;
-	List<Surfaces> surfaces;
-	List<Materials> materials;
-	List<Light> lights;
+	List<Surfaces> surfaces = new ArrayList<>();
+	List<Materials> materials = new ArrayList<>();
+	List<Light> lights = new ArrayList<>();
 	Scene scene;
 
 	/**
@@ -167,6 +168,7 @@ public class RayTracer {
 		Vector delta_y = camera.getUpVector().multByScalar(pixel);
 
 		for (int i = 0; i < imageWidth; i++) {
+			Color color = new Color(0, 0, 0);
 			for (int j = 0; j < imageHeight; j++) {
 				// Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
 
@@ -177,19 +179,33 @@ public class RayTracer {
 				Ray ray = new Ray(currentPixel, directionVector);
 
 				// Find intersection
-				Intersection hit = Intersection.findIntersection(ray, scene);
-				
+				Intersection intersection = Intersection.findIntersection(ray, scene);
 				// Color
-				Color color;
-				if (!hit.getHasIntersection()) {
+				if (intersection.getMinT() == Double.MAX_VALUE) {
 					// no intersection - need background color
 					color = set.getBackgroundColor();
 				} else {
 					// has intersection
-					
+//					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene);
+//					color.setRed(color.getRed() + tmpColor.getRed());
+//					color.setGreen(color.getGreen() + tmpColor.getGreen());
+//					color.setBlue(color.getBlue() + tmpColor.getBlue());
+					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex());
+					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
+							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
+							material.getReflectionColor().getRed());
+					color.setGreen(set.getBackgroundColor().getGreen() * material.getTransparency() +
+							(material.getDiffuseColor().getGreen() + material.getSpecularColor().getGreen()) * (1-material.getTransparency()) +
+							material.getReflectionColor().getGreen());
+					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
+							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
+							material.getReflectionColor().getBlue());
+					System.out.println(color.getRed());
 				}
 
-
+				rgbData[(i * this.imageWidth + j) * 3] = (byte) (color.getRed() * 255);
+				rgbData[(i * this.imageWidth + j) * 3 + 1] = (byte) (color.getGreen() * 255);
+				rgbData[(i * this.imageWidth + j) * 3 + 2] = (byte) (color.getBlue() * 255);
 
 			}
 		}

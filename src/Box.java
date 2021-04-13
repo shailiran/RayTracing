@@ -55,6 +55,16 @@ public class Box implements Surfaces {
         }
         return 0;
     }
+
+    @Override
+    public Vector calcSurfaceNormal(Vector intersectionPoint) {
+        return null;
+    }
+
+    @Override
+    public int getMaterialIndex() {
+        return materialIndex;
+    }
 }
 //
 //    public static AbstractMap<Hit, Plane> FindPlaneHitsForBox(Ray ray, List<Plane> planes, int index) {

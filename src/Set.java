@@ -15,4 +15,12 @@ public class Set {
     public Color getBackgroundColor(){
         return this.backgroundColor;
     }
+
+    public int getMaxRecursionLevel() {
+        return maxRecursionLevel;
+    }
+
+    public int getNumberOfShadowsRays() {
+        return NumberOfShadowsRays;
+    }
 }

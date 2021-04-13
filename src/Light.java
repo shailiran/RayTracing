@@ -1,11 +1,11 @@
 package src;
 
 public class Light {
-    Vector position;
-    Color color;
-    double specularIntensity;
-    double shadowIntensity;
-    double lightRadius;
+    private Vector position;
+    private Color color;
+    private double specularIntensity;
+    private double shadowIntensity;
+    private double lightRadius;
 
     public Light(String[] params) {
        this.position = new Vector(Double.parseDouble(params[0]), Double.parseDouble(params[1]),
@@ -17,4 +17,23 @@ public class Light {
        this.lightRadius = Double.parseDouble(params[8]);
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public double getLightRadius() {
+        return lightRadius;
+    }
+
+    public Vector getPosition() {
+        return position;
+    }
+
+    public double getShadowIntensity() {
+        return shadowIntensity;
+    }
+
+    public double getSpecularIntensity() {
+        return specularIntensity;
+    }
 }
