@@ -145,16 +145,28 @@ public class RayTracer {
 
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 		double pixelSize = camera.getScreenWidth() / imageWidth;
-		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
-				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
+		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector()
+				.multByScalar(camera.getScreenDistance())); // Center = position + towards * distance
 
-		Vector p_0 = camera.getPosition();
+
+
+//		Vector p_0 = camera.getPosition();
 		double aspectRatio = imageHeight / imageWidth;
 		double m = imageHeight / pixelSize;
 		double k = imageWidth / pixelSize;
 		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
 		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
-		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
+
+		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance());
+		Vector left = camera.getRightVector().multByScalar(-0.5 * camera.getScreenWidth());
+		Vector top = camera.getUpVector().multByScalar(0.5 * aspectRatio * camera.getScreenWidth());
+		Vector topLeft = left.addVectors(top.addVectors(center));
+
+		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(0.5));
+		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
+
+
+//		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
@@ -214,6 +226,7 @@ public class RayTracer {
 		System.out.println("Saved file " + outputFileName);
 
 	}
+
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
 
