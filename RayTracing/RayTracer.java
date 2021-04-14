@@ -145,9 +145,9 @@ public class RayTracer {
 
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 		double pixel = camera.getScreenWidth() / imageWidth;
-		Vector screenCenter = camera.getPosition();
-//		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
-//				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
+//		Vector screenCenter = camera.getLookAtPoint();
+		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
+				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
 //
 //		Vector tmp1 = camera.getRightVector().multByScalar(camera.getScreenWidth() - pixel); // (width - pixel size) * right vector
 //		Vector tmp2 = camera.getUpVector().multByScalar(imageHeight - pixel); // (height - pixel size) * Up Vector
@@ -159,8 +159,8 @@ public class RayTracer {
 
 		// double g_y = 0.5 * (imageHeight - pixel);
 		// double g_x = 0.5 * (imageWidth - pixel);
-		// double m = imageHeight / pixel;
-		// double k = imageWidth / pixel;
+		 double m = imageHeight / pixel;
+		 double k = imageWidth / pixel;
 		// double aspectRatio = (m - 1) / (k - 1);
 		// Vector q_x = camera.getRightVector().multByScalar((2 * g_x) / (k-1));
 		// Vector q_y = camera.getUpVector().multByScalar((2 * g_y) / m - 1);
@@ -170,6 +170,7 @@ public class RayTracer {
 
 		Vector delta_x = camera.getRightVector().multByScalar(pixel);
 		Vector delta_y = camera.getUpVector().multByScalar(pixel);
+		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
@@ -178,9 +179,9 @@ public class RayTracer {
 
 				// Construct ray through pixel
 				Vector move = delta_y.multByScalar(i).addVectors(delta_x.multByScalar(j));
-				Vector currentPixel = p_0.addVectors(move); 
-				Vector directionVector = currentPixel.subVectors(camera.getPosition());
-				Ray ray = new Ray(currentPixel, directionVector);
+				Vector currentPixel = firstPixel.addVectors(move);
+				Vector directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
+				Ray ray = new Ray(camera.getPosition(), directionVector);
 
 				// Find intersection
 				Intersection intersection = Intersection.findIntersection(ray, scene);
