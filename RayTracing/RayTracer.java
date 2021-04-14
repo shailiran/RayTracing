@@ -144,15 +144,16 @@ public class RayTracer {
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
-		double pixel = camera.getScreenWidth() / imageWidth;
+		double pixelSize = camera.getScreenWidth() / imageWidth;
 		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
 				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
 
 		Vector p_0 = camera.getPosition();
-		double m = imageHeight / pixel;
-		double k = imageWidth / pixel;
-		Vector delta_x = camera.getRightVector().multByScalar(pixel);
-		Vector delta_y = camera.getUpVector().multByScalar(pixel);
+		double aspectRatio = imageHeight / imageWidth;
+		double m = imageHeight / pixelSize;
+		double k = imageWidth / pixelSize;
+		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
+		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
 
 		for (int i = 0; i < imageWidth; i++) {
