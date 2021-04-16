@@ -144,41 +144,28 @@ public class RayTracer {
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
 		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
-		double pixel = camera.getScreenWidth() / imageWidth;
-//		Vector screenCenter = camera.getLookAtPoint();
-		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector())
-				.multByScalar(camera.getScreenDistance()); // Center = position + towards * distance
-//
-//		Vector tmp1 = camera.getRightVector().multByScalar(camera.getScreenWidth() - pixel); // (width - pixel size) * right vector
-//		Vector tmp2 = camera.getUpVector().multByScalar(imageHeight - pixel); // (height - pixel size) * Up Vector
-//		Vector tmp = (tmp1.addVectors(tmp2)).multByScalar(0.5); // tmp = (tmp1 + tmp2) * 0.5
-//		Vector p_0 = screenCenter.subVectors(tmp); // The left top pixel
+		double pixelSize = camera.getScreenWidth() / imageWidth;
+		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector()
+				.multByScalar(camera.getScreenDistance())); // Center = position + towards * distance
 
-		Vector p_0 = camera.getPosition();
+		// calc first pixel
+		double aspectRatio = imageHeight / imageWidth;
+		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
+		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 
+		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance()).addVectors(camera.getPosition());
+		Vector left = camera.getRightVector().multByScalar(-0.5 * camera.getScreenWidth());
+		Vector top = camera.getUpVector().multByScalar(0.5 * aspectRatio * camera.getScreenWidth());
+		Vector topLeft = left.addVectors(top.addVectors(center));
 
-		// double g_y = 0.5 * (imageHeight - pixel);
-		// double g_x = 0.5 * (imageWidth - pixel);
-		 double m = imageHeight / pixel;
-		 double k = imageWidth / pixel;
-		// double aspectRatio = (m - 1) / (k - 1);
-		// Vector q_x = camera.getRightVector().multByScalar((2 * g_x) / (k-1));
-		// Vector q_y = camera.getUpVector().multByScalar((2 * g_y) / m - 1);
-		// Vector p_11 = (camera.getTowardsVector().multByScalar(camera.getScreenDistance()))
-		// .addVectors((camera.getRightVector().multByScalar(g_x)))
-		// 		.subVectors (camera.getUpVector().multByScalar(g_y)); //p_11 = towards * distance + g_x * right - g_y * Up
-
-		Vector delta_x = camera.getRightVector().multByScalar(pixel);
-		Vector delta_y = camera.getUpVector().multByScalar(pixel);
-		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
+		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(-0.5));
+		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
 			for (int j = 0; j < imageHeight; j++) {
-				// Vector p_ij = p_11.addVectors(q_x.multByScalar(i)).subVectors(q_y.multByScalar(j));
-
 				// Construct ray through pixel
-				Vector move = delta_y.multByScalar(i).addVectors(delta_x.multByScalar(j));
+				Vector move = delta_y.multByScalar(-j).addVectors(delta_x.multByScalar(i));
 				Vector currentPixel = firstPixel.addVectors(move);
 				Vector directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
 				Ray ray = new Ray(camera.getPosition(), directionVector);
@@ -191,10 +178,6 @@ public class RayTracer {
 					color = set.getBackgroundColor();
 				} else {
 					// has intersection
-//					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene);
-//					color.setRed(color.getRed() + tmpColor.getRed());
-//					color.setGreen(color.getGreen() + tmpColor.getGreen());
-//					color.setBlue(color.getBlue() + tmpColor.getBlue());
 					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex()-1);
 					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
 							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
@@ -205,7 +188,7 @@ public class RayTracer {
 					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
 							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
 							material.getReflectionColor().getBlue());
-					System.out.println(color.getRed());
+					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
 				}
 
 				rgbData[(i * this.imageWidth + j) * 3] = (byte) (color.getRed() * 255);
@@ -236,6 +219,7 @@ public class RayTracer {
 		System.out.println("Saved file " + outputFileName);
 
 	}
+
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
 

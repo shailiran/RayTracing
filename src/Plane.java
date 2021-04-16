@@ -20,7 +20,7 @@ public class Plane implements Surfaces {
 
     @Override
     public double intersection(Ray ray) {
-        double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));
+        double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));//TODO: *-1?
         return t;
     }
 
