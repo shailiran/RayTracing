@@ -148,31 +148,24 @@ public class RayTracer {
 		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector()
 				.multByScalar(camera.getScreenDistance())); // Center = position + towards * distance
 
-
-
-//		Vector p_0 = camera.getPosition();
+		// calc first pixel
 		double aspectRatio = imageHeight / imageWidth;
-		double m = imageHeight / pixelSize;
-		double k = imageWidth / pixelSize;
 		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
 		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 
-		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance());
+		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance()).addVectors(camera.getPosition());
 		Vector left = camera.getRightVector().multByScalar(-0.5 * camera.getScreenWidth());
 		Vector top = camera.getUpVector().multByScalar(0.5 * aspectRatio * camera.getScreenWidth());
 		Vector topLeft = left.addVectors(top.addVectors(center));
 
-		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(0.5));
+		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(-0.5));
 		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
-
-
-//		Vector firstPixel = screenCenter.addVectors(delta_y.multByScalar((m-1) / 2)).addVectors(delta_x.multByScalar((k-1) / 2));
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
 			for (int j = 0; j < imageHeight; j++) {
 				// Construct ray through pixel
-				Vector move = delta_y.multByScalar(i).addVectors(delta_x.multByScalar(j));
+				Vector move = delta_y.multByScalar(-j).addVectors(delta_x.multByScalar(i));
 				Vector currentPixel = firstPixel.addVectors(move);
 				Vector directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
 				Ray ray = new Ray(camera.getPosition(), directionVector);
@@ -195,7 +188,7 @@ public class RayTracer {
 					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
 							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
 							material.getReflectionColor().getBlue());
-					System.out.println(color.getRed());
+					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
 				}
 
 				rgbData[(i * this.imageWidth + j) * 3] = (byte) (color.getRed() * 255);

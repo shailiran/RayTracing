@@ -25,7 +25,8 @@ public class Intersection {
     }
 
     public static Intersection findIntersection(Ray ray, Scene scene) {
-        double t, minT = Double.MAX_VALUE;
+        double t;
+        double minT = Double.MAX_VALUE;
         List<Surfaces> surfaces = scene.getSurfaces();
         Surfaces closestSurface = null;
         boolean hasIntersection = false;
