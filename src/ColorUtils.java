@@ -10,15 +10,16 @@ public class ColorUtils {
             color = scene.getSet().getBackgroundColor();
             return color;
         }
-        Vector intersectionPoint = ray.getBase().addVectors(ray.getDirection()).multByScalar(intersection.getMinT());
+        //P = p_0 + tv
+        Vector intersectionPoint = ray.getBase().addVectors((ray.getDirection()).multByScalar(intersection.getMinT()));
         Vector N = intersection.getMinSurface().calcSurfaceNormal(intersectionPoint);
-        //checking if the angle between the N and the ray is smaller than 90
+
+        //checking if the angle between the N and the ray is greater than 90
         //and if so change the direction of N.
         if (N.dotProduct(ray.getDirection()) > 0) { //TODO: check if < 0 or >0
             N = N.multByScalar(-1);
         }
-        N.normalizeInPlace();
-        Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex());
+        Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex() - 1);
         color = new Color(0,0,0);
 
         for (Light light: scene.getLights()) {
@@ -61,8 +62,16 @@ public class ColorUtils {
 
 //        color.setRed(scene.getSet().getBackgroundColor().getRed() * transparency + );
 
+        Color res = updateColor(color);
+        return res;
+    }
 
-        return color;
+    private static Color updateColor (Color color) {
+       Color res = new Color(0,0,0);
+       res.setRed(Math.min(1, color.getRed()));
+       res.setGreen(Math.min(1, color.getGreen()));
+       res.setBlue(Math.min(1, color.getBlue()));
+       return res;
     }
 
 }

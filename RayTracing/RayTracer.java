@@ -178,16 +178,22 @@ public class RayTracer {
 					color = set.getBackgroundColor();
 				} else {
 					// has intersection
-					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex()-1);
-					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
-							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getRed());
-					color.setGreen(set.getBackgroundColor().getGreen() * material.getTransparency() +
-							(material.getDiffuseColor().getGreen() + material.getSpecularColor().getGreen()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getGreen());
-					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
-							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getBlue());
+//					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex()-1);
+					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene);
+
+					color.setRed(tmpColor.getRed());
+					color.setGreen(tmpColor.getGreen());
+					color.setBlue(tmpColor.getBlue());
+//					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
+//							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
+//							material.getReflectionColor().getRed());
+//					color.setGreen(set.getBackgroundColor().getGreen() * material.getTransparency() +
+//							(material.getDiffuseColor().getGreen() + material.getSpecularColor().getGreen()) * (1-material.getTransparency()) +
+//							material.getReflectionColor().getGreen());
+//					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
+//							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
+//							material.getReflectionColor().getBlue());
+					System.out.println(11111);
 					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
 				}
 
@@ -219,6 +225,8 @@ public class RayTracer {
 		System.out.println("Saved file " + outputFileName);
 
 	}
+
+
 
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
