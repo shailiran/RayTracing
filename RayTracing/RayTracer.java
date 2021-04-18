@@ -160,6 +160,7 @@ public class RayTracer {
 
 		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(-0.5));
 		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
+//		Vector firstPixel = new Vector(-0.5, 8.591141964605509, -1.525532962844443);
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
@@ -178,7 +179,8 @@ public class RayTracer {
 					color = set.getBackgroundColor();
 				} else {
 					// has intersection
-					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene);
+					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene,
+							scene.getSet().getMaxRecursionLevel());
 
 					color.setRed(tmpColor.getRed());
 					color.setGreen(tmpColor.getGreen());

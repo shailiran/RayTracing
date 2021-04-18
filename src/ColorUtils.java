@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 public class ColorUtils {
-
-    public static Color calcColor (Intersection intersection, Ray ray, Scene scene) {
+    static final double EPSILON = 0.001;
+    public static Color calcColor (Intersection intersection, Ray ray, Scene scene, int recLevel) {
         Color color;
-        if (scene.getSet().getMaxRecursionLevel() == 0) {
+        if (recLevel == 0) {
             color = scene.getSet().getBackgroundColor();
             return color;
         }
@@ -52,45 +52,72 @@ public class ColorUtils {
             color.setBlue(color.getBlue() + (material.getSpecularColor().getBlue() * light.getColor().getBlue() *
                     cosBeta * light.getSpecularIntensity()));
 
-
-
 //            color.setRed(color.getRed() + material.getReflectionColor().getRed());
 //            color.setGreen(color.getGreen() + material.getReflectionColor().getGreen());
 //            color.setBlue(color.getBlue() + material.getReflectionColor().getBlue());
-
 
             //Soft Shadow
             //The light_intesity only affects the diffuse and specular lighting
             //ligh_intesity = (1 - shadow_intensity) * 1 + shadow_intensity * (%of rays
             //that hit the points from the light source)
-            double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
-            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) +
-                    light.getShadowIntensity() * shadowIntensity));
-            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) +
-                    light.getShadowIntensity() * shadowIntensity));
-            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) +
-                    light.getShadowIntensity() * shadowIntensity));
 
-
-
-
-
-
-
+//            double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
+//            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) +
+//                    light.getShadowIntensity() * shadowIntensity));
+//            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) +
+//                    light.getShadowIntensity() * shadowIntensity));
+//            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) +
+//                    light.getShadowIntensity() * shadowIntensity));
         }
 
         // Color transparencyColor
+
+
+        // Reflection
+        Color reflectionColor = new Color(0, 0, 0);
+        Color matReflection = material.getReflectionColor();
+        if (matReflection.getRed() != 0 || matReflection.getGreen() != 0 || matReflection.getBlue() != 0) {
+            reflectionColor = reflectionColor(ray, intersectionPoint, N, scene, material, recLevel);
+        }
+
         // output color = (background color) * transparency + (diffuse + specular) * (1 - transparency) + (reflection color)
 //        double transparency = 0;
-
-//        color.setRed(scene.getSet().getBackgroundColor().getRed() * transparency + );
-
-
-        Color res = updateColor(colorWithShadow);
+        Color res = new Color(0, 0, 0);
+        res.setRed(color.getRed() * (1 - material.getTransparency()) + reflectionColor.getRed());
+        res.setGreen(color.getGreen() * (1 - material.getTransparency()) + reflectionColor.getGreen());
+        res.setBlue(color.getBlue() * (1 - material.getTransparency()) + reflectionColor.getBlue());
+        res = updateColor(res);
         return res;
     }
 
-    private static Color updateColor (Color color) {
+    private static Color reflectionColor(Ray ray, Vector intersectionPoint, Vector N, Scene scene, Materials material,
+                                         int recLevel) {
+        Vector V = ray.getDirection();
+
+        // R = V - 2 * (VN)N
+        Vector R = V.addVectors(N.multByScalar(-2 * V.dotProduct(N)));
+        R.normalizeInPlace();
+        Vector base = intersectionPoint.addVectors(R.multByScalar(EPSILON));
+        Ray rayReflection = new Ray(base, R);
+        Intersection intersection = Intersection.findIntersection(rayReflection, scene);
+        Color reflectionColor = new Color(0, 0, 0);
+
+        if (intersection.getMinT() == Double.MAX_VALUE) {
+            Color backgroundColor = scene.getSet().getBackgroundColor();
+            reflectionColor.setRed(backgroundColor.getRed() * material.getReflectionColor().getRed());
+            reflectionColor.setGreen(backgroundColor.getGreen() * material.getReflectionColor().getGreen());
+            reflectionColor.setBlue(backgroundColor.getBlue() * material.getReflectionColor().getBlue());
+        } else {
+            Color tmp = calcColor(intersection, rayReflection, scene, recLevel - 1);
+            reflectionColor.setRed(tmp.getRed() * material.getReflectionColor().getRed());
+            reflectionColor.setGreen(tmp.getGreen() * material.getReflectionColor().getGreen());
+            reflectionColor.setBlue(tmp.getBlue() * material.getReflectionColor().getBlue());
+        }
+        Color updated = updateColor(reflectionColor);
+        return updated;
+    }
+
+    private static Color updateColor(Color color) {
        Color res = new Color(0,0,0);
        res.setRed(Math.min(1, color.getRed()));
        res.setGreen(Math.min(1, color.getGreen()));
@@ -108,7 +135,7 @@ public class ColorUtils {
 //      2. Define a rectangle on that plane, centered at the light source and as wide as the
 //         defined light radius.
         Vector tmp = lightPlane.calcVectorOnThePlane();
-        Vector v = tmp.addVectors(light.getPosition().multByScalar(-1));
+        Vector v = tmp.addVectors(light.getPosition().multByScalar(-1));//TODO: Inside - mult by (-1)
         //Vector v = planeNormal.crossProduct(tmp).normalizeVector();
         v.normalizeInPlace();
         Vector u = planeNormal.crossProduct(v).normalizeVector();
