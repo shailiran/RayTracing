@@ -18,6 +18,19 @@ public class Plane implements Surfaces {
         this.materialIndex = materialIndex;
     }
 
+    public Plane(Vector normal, double offset) {
+        this.normal = normal.normalizeVector();
+        this.offset = offset * -1;
+    }
+
+    public Vector calcVectorOnThePlane() {
+        //Plane : Ax + By + Cz + offset = 0 (PN=C) (A,B,C) = N
+        double z = -1 * (this.normal.getX() + this.normal.getY() + this.offset) / this.normal.getZ();
+        Vector res = new Vector(1,1, z);
+        return res;
+    }
+
+
     @Override
     public double intersection(Ray ray) {
         double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));//TODO: *-1?

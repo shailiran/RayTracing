@@ -41,5 +41,16 @@ public class Intersection {
         return new Intersection(minT, closestSurface, hasIntersection);
     }
 
+    public static boolean checkIntersection(Ray ray, Scene scene, double norm) {
+        double t;
+        for (Surfaces surface : scene.getSurfaces()) {
+            t = surface.intersection(ray);
+            if (t > 0 && t < norm) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

@@ -5,4 +5,5 @@ public interface Surfaces {
     Vector calcSurfaceNormal(Vector intersectionPoint);
     int getMaterialIndex();
 
+
 }

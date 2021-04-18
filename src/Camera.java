@@ -22,7 +22,7 @@ public class Camera {
         this.fishEyeLens = Boolean.parseBoolean(params[11]);
 
 //        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
-        this.towardsVector = lookAtPoint.subVectors(position);//TODO: look at point?
+        this.towardsVector = lookAtPoint.subVectors(position);
 //        this.towardsVector = lookAtPoint;
         this.towardsVector.normalizeInPlace();
         this.upVector = towardsVector.crossProduct(upVector);

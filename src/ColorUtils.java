@@ -1,6 +1,7 @@
 package src;
 
 import java.util.List;
+import java.util.Random;
 
 public class ColorUtils {
 
@@ -21,7 +22,7 @@ public class ColorUtils {
         }
         Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex() - 1);
         color = new Color(0,0,0);
-
+        Color colorWithShadow = new Color(0, 0, 0);
         for (Light light: scene.getLights()) {
             Vector L = light.getPosition().subVectors(intersectionPoint);
             L.normalizeInPlace();
@@ -51,18 +52,41 @@ public class ColorUtils {
             color.setBlue(color.getBlue() + (material.getSpecularColor().getBlue() * light.getColor().getBlue() *
                     cosBeta * light.getSpecularIntensity()));
 
-            //TODO:Soft Shadow
+
+
+//            color.setRed(color.getRed() + material.getReflectionColor().getRed());
+//            color.setGreen(color.getGreen() + material.getReflectionColor().getGreen());
+//            color.setBlue(color.getBlue() + material.getReflectionColor().getBlue());
+
+
+            //Soft Shadow
+            //The light_intesity only affects the diffuse and specular lighting
+            //ligh_intesity = (1 - shadow_intensity) * 1 + shadow_intensity * (%of rays
+            //that hit the points from the light source)
+            double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
+            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) +
+                    light.getShadowIntensity() * shadowIntensity));
+            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) +
+                    light.getShadowIntensity() * shadowIntensity));
+            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) +
+                    light.getShadowIntensity() * shadowIntensity));
+
+
+
+
+
 
 
         }
 
         // Color transparencyColor
         // output color = (background color) * transparency + (diffuse + specular) * (1 - transparency) + (reflection color)
-        double transparency = 0;
+//        double transparency = 0;
 
 //        color.setRed(scene.getSet().getBackgroundColor().getRed() * transparency + );
 
-        Color res = updateColor(color);
+
+        Color res = updateColor(colorWithShadow);
         return res;
     }
 
@@ -73,5 +97,68 @@ public class ColorUtils {
        res.setBlue(Math.min(1, color.getBlue()));
        return res;
     }
+
+    private static double softShadow(Vector intersectionPoint,
+                                    Light light, Vector planeNormal, Scene scene) {
+
+//      1. Find a plane which is perpendicular to the ray.
+        double offset = planeNormal.dotProduct(light.getPosition());
+        Plane lightPlane = new Plane(planeNormal, offset);
+
+//      2. Define a rectangle on that plane, centered at the light source and as wide as the
+//         defined light radius.
+        Vector tmp = lightPlane.calcVectorOnThePlane();
+        Vector v = tmp.addVectors(light.getPosition().multByScalar(-1));
+        //Vector v = planeNormal.crossProduct(tmp).normalizeVector();
+        v.normalizeInPlace();
+        Vector u = planeNormal.crossProduct(v).normalizeVector();
+        Vector topLeft = light.getPosition().addVectors(v.multByScalar(-0.5 * light.getLightRadius()))
+                .addVectors(u.multByScalar(-0.5 * light.getLightRadius()));
+
+//        3. Divide the rectangle into a grid of N*N cells, where N is the number of shadow
+//        rays from the scene parameters.
+        double delta = 1.0 / scene.getSet().getNumberOfShadowsRays();
+        Vector rectangleV = (topLeft.addVectors(v.multByScalar(light.getLightRadius())))
+                .subVectors(topLeft);
+        Vector rectangleU = (topLeft.addVectors(u.multByScalar(light.getLightRadius())))
+                .subVectors(topLeft);
+        Vector delta_v = rectangleV.multByScalar(delta);
+        Vector delta_u = rectangleU.multByScalar(delta);
+
+//        4. If we shoot a ray from the center of each cell, we will get banding artifacts (you
+//        can test it and see for yourself). To avoid banding we select a random point in each
+//        cell (by uniformly sampling x value and y value using rnd.nextDouble() function), and
+//        shoot the ray from the selected random point to the light.
+//        5. Aggregate the values of all rays that were cast and count how many of them hit
+//        the required point on the surface.
+        double sum = 0;
+        for (int i = 0; i < scene.getSet().getNumberOfShadowsRays(); i++) {
+            for (int j = 0; j < scene.getSet().getNumberOfShadowsRays(); j++){
+                sum += pointToLightRay(scene, topLeft, delta_v, delta_u, i, j, intersectionPoint);
+            }
+        }
+        double denominator = Math.pow(scene.getSet().getNumberOfShadowsRays(), 2);
+        return sum / denominator;
+    }
+
+    private static int pointToLightRay (Scene scene, Vector topLeft, Vector delta_v,
+                                           Vector delta_u, int i, int j, Vector intersectionPoint) {
+        Random random = new Random();
+        double x = random.nextDouble();
+        double y = random.nextDouble();
+        Vector p = topLeft.addVectors(delta_v.multByScalar(i + x).addVectors(delta_u.multByScalar(j + y)));
+        Vector direction = p.subVectors(intersectionPoint);
+        double directionNorm = direction.getNorm();
+        direction.normalizeInPlace();
+        Vector rayBase = intersectionPoint.addVectors(direction.multByScalar(0.001));
+        Ray ray = new Ray(rayBase, direction);
+        boolean result = Intersection.checkIntersection(ray, scene, directionNorm);
+
+        if (result) {
+            return 0;
+        }
+        return 1;
+    }
+
 
 }
