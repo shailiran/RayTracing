@@ -52,22 +52,19 @@ public class ColorUtils {
             color.setBlue(color.getBlue() + (material.getSpecularColor().getBlue() * light.getColor().getBlue() *
                     cosBeta * light.getSpecularIntensity()));
 
-//            color.setRed(color.getRed() + material.getReflectionColor().getRed());
-//            color.setGreen(color.getGreen() + material.getReflectionColor().getGreen());
-//            color.setBlue(color.getBlue() + material.getReflectionColor().getBlue());
+            // Soft Shadow
+            // The light_intesity only affects the diffuse and specular lighting
+            // ligh_intesity = (1 - shadow_intensity) * 1 + shadow_intensity * (%of rays
+            // that hit the points from the light source)
 
-            //Soft Shadow
-            //The light_intesity only affects the diffuse and specular lighting
-            //ligh_intesity = (1 - shadow_intensity) * 1 + shadow_intensity * (%of rays
-            //that hit the points from the light source)
-
-//            double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
-//            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) +
-//                    light.getShadowIntensity() * shadowIntensity));
-//            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) +
-//                    light.getShadowIntensity() * shadowIntensity));
-//            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) +
-//                    light.getShadowIntensity() * shadowIntensity));
+            // light_color = light_color * (1.0-light.shadow_intensity*no_shadow_rays/self.__settings.root_num_of_shadow_rays**2)
+            double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
+            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) *
+                    shadowIntensity));
+            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) *
+                    shadowIntensity));
+            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) *
+                    shadowIntensity));
         }
 
         // Color transparencyColor
@@ -83,9 +80,9 @@ public class ColorUtils {
         // output color = (background color) * transparency + (diffuse + specular) * (1 - transparency) + (reflection color)
 //        double transparency = 0;
         Color res = new Color(0, 0, 0);
-        res.setRed(color.getRed() * (1 - material.getTransparency()) + reflectionColor.getRed());
-        res.setGreen(color.getGreen() * (1 - material.getTransparency()) + reflectionColor.getGreen());
-        res.setBlue(color.getBlue() * (1 - material.getTransparency()) + reflectionColor.getBlue());
+        res.setRed(colorWithShadow.getRed() * (1 - material.getTransparency()) + reflectionColor.getRed());
+        res.setGreen(colorWithShadow.getGreen() * (1 - material.getTransparency()) + reflectionColor.getGreen());
+        res.setBlue(colorWithShadow.getBlue() * (1 - material.getTransparency()) + reflectionColor.getBlue());
         res = updateColor(res);
         return res;
     }
@@ -119,9 +116,21 @@ public class ColorUtils {
 
     private static Color updateColor(Color color) {
        Color res = new Color(0,0,0);
-       res.setRed(Math.min(1, color.getRed()));
-       res.setGreen(Math.min(1, color.getGreen()));
-       res.setBlue(Math.min(1, color.getBlue()));
+       if (color.getRed() >= 0) {
+           res.setRed(Math.min(1, color.getRed()));
+       } else {
+           res.setRed(0);
+       }
+       if (color.getGreen() >= 0) {
+           res.setGreen(Math.min(1, color.getGreen()));
+       } else {
+           res.setGreen(0);
+       }
+       if (color.getBlue() >= 0) {
+           res.setBlue(Math.min(1, color.getBlue()));
+       } else {
+            res.setBlue(0);
+       }
        return res;
     }
 
