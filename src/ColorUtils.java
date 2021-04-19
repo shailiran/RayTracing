@@ -66,9 +66,10 @@ public class ColorUtils {
         }
 
         // Color transparencyColor
-
-
-
+        Color transparencyColor = new Color(0,0,0);
+        if (material.getTransparency() != 0) {
+            transparencyColor = transparencyColor(ray, intersectionPoint, scene, recLevel);
+        }
 
         // Reflection
         Color reflectionColor = new Color(0, 0, 0);
@@ -80,9 +81,12 @@ public class ColorUtils {
         // output color = (background color) * transparency + (diffuse + specular) * (1 - transparency) + (reflection color)
 //        double transparency = 0;
         Color res = new Color(0, 0, 0);
-        res.setRed(colorWithShadow.getRed() * (1 - material.getTransparency()) + reflectionColor.getRed());
-        res.setGreen(colorWithShadow.getGreen() * (1 - material.getTransparency()) + reflectionColor.getGreen());
-        res.setBlue(colorWithShadow.getBlue() * (1 - material.getTransparency()) + reflectionColor.getBlue());
+        res.setRed(colorWithShadow.getRed() * (1 - material.getTransparency()) +
+                transparencyColor.getRed() * material.getTransparency() + reflectionColor.getRed());
+        res.setGreen(colorWithShadow.getGreen() * (1 - material.getTransparency()) +
+                transparencyColor.getGreen() * material.getTransparency() + reflectionColor.getGreen());
+        res.setBlue(colorWithShadow.getBlue() * (1 - material.getTransparency()) +
+                transparencyColor.getBlue() * material.getTransparency() + reflectionColor.getBlue());
         res = updateColor(res);
         return res;
     }
@@ -96,7 +100,7 @@ public class ColorUtils {
         R.normalizeInPlace();
         Vector base = intersectionPoint.addVectors(R.multByScalar(EPSILON));
         Ray rayReflection = new Ray(base, R);
-        Intersection intersection = Intersection.findIntersection(rayReflection, scene);
+        Intersection intersection = Intersection.findIntersection(rayReflection, scene, false);
         Color reflectionColor = new Color(0, 0, 0);
 
         if (intersection.getMinT() == Double.MAX_VALUE) {
@@ -111,6 +115,23 @@ public class ColorUtils {
             reflectionColor.setBlue(tmp.getBlue() * material.getReflectionColor().getBlue());
         }
         Color updated = updateColor(reflectionColor);
+        return updated;
+    }
+
+    public static Color transparencyColor(Ray ray, Vector intersectionPoint, Scene scene,int recLevel) {
+        Vector direction = ray.getDirection();
+        Vector base = intersectionPoint.addVectors(direction.multByScalar(EPSILON));
+        Ray transparencyRay = new Ray(base, direction);
+        Intersection transparencyIntersection = Intersection.findIntersection(transparencyRay, scene,true);
+        Color background = scene.getSet().getBackgroundColor();
+        Color res = new Color(background.getRed(), background.getGreen(), background.getBlue());
+        if (transparencyIntersection.getMinT() != Double.MAX_VALUE) {
+            Color color = calcColor(transparencyIntersection, transparencyRay, scene, recLevel -1);
+            res.setRed(color.getRed());
+            res.setGreen(color.getGreen());
+            res.setBlue(color.getBlue());
+        }
+        Color updated = updateColor(res);
         return updated;
     }
 

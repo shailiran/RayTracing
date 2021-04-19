@@ -173,7 +173,7 @@ public class RayTracer {
 				Ray ray = new Ray(camera.getPosition(), directionVector);
 
 				// Find intersection
-				Intersection intersection = Intersection.findIntersection(ray, scene);
+				Intersection intersection = Intersection.findIntersection(ray, scene, false);
 				// Color
 				if (intersection.getMinT() == Double.MAX_VALUE) {
 					// no intersection - need background color

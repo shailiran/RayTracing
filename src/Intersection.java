@@ -24,10 +24,15 @@ public class Intersection {
         return this.hasIntersection;
     }
 
-    public static Intersection findIntersection(Ray ray, Scene scene) {
+    public static Intersection findIntersection(Ray ray, Scene scene, boolean flagTransparency) {
         double t;
         double minT = Double.MAX_VALUE;
-        List<Surfaces> surfaces = scene.getSurfaces();
+        List<Surfaces> surfaces;
+        if (flagTransparency) {
+            surfaces = scene.getTransparencySurfaces();
+        } else {
+            surfaces = scene.getSurfaces();
+        }
         Surfaces closestSurface = null;
         boolean hasIntersection = false;
         for (Surfaces surface: surfaces) {
