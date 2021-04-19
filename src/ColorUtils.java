@@ -6,7 +6,7 @@ import java.util.Random;
 public class ColorUtils {
     static final double EPSILON = 0.001;
     public static Color calcColor(Intersection intersection, Ray ray, Scene scene, int recLevel) {
-        Color color;
+        Color color = new Color();
         if (recLevel == 0) {
             color = scene.getSet().getBackgroundColor();
             return color;
@@ -21,10 +21,9 @@ public class ColorUtils {
             N = N.multByScalar(-1);
         }
         Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex() - 1);
-        color = new Color(0,0,0);
         Color colorWithShadow = new Color(0, 0, 0);
         for (Light light: scene.getLights()) {
-            color = new Color(0,0,0); // TODO - delete?
+            color.setToZero();
             Vector L = light.getPosition().subVectors(intersectionPoint);
             L.normalizeInPlace();
             // ####### Diffuse reflection #######

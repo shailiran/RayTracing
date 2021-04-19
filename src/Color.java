@@ -36,4 +36,10 @@ public class Color {
     public void setRed(double red) {
         this.red = red;
     }
+
+    public void setToZero() {
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
+    }
 }
