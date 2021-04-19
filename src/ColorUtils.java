@@ -56,7 +56,6 @@ public class ColorUtils {
             // ligh_intesity = (1 - shadow_intensity) * 1 + shadow_intensity * (%of rays
             // that hit the points from the light source)
 
-            // light_color = light_color * (1.0-light.shadow_intensity*no_shadow_rays/self.__settings.root_num_of_shadow_rays**2)
             double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
             colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity())
                     + light.getShadowIntensity() * shadowIntensity));
@@ -67,6 +66,8 @@ public class ColorUtils {
         }
 
         // Color transparencyColor
+
+
 
 
         // Reflection

@@ -1,7 +1,7 @@
 package src;
 
 public class Set {
-    private Color backgroundColor;
+    private final Color backgroundColor;
     private int NumberOfShadowsRays;
     private int maxRecursionLevel;
 
