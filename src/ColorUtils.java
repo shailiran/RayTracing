@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class ColorUtils {
     static final double EPSILON = 0.001;
-    public static Color calcColor (Intersection intersection, Ray ray, Scene scene, int recLevel) {
+    public static Color calcColor(Intersection intersection, Ray ray, Scene scene, int recLevel) {
         Color color;
         if (recLevel == 0) {
             color = scene.getSet().getBackgroundColor();
@@ -17,13 +17,14 @@ public class ColorUtils {
 
         //checking if the angle between the N and the ray is greater than 90
         //and if so change the direction of N.
-        if (N.dotProduct(ray.getDirection()) > 0) { //TODO: check if < 0 or >0
+        if (N.dotProduct(ray.getDirection()) > 0) {
             N = N.multByScalar(-1);
         }
         Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex() - 1);
         color = new Color(0,0,0);
         Color colorWithShadow = new Color(0, 0, 0);
         for (Light light: scene.getLights()) {
+            color = new Color(0,0,0); // TODO - delete?
             Vector L = light.getPosition().subVectors(intersectionPoint);
             L.normalizeInPlace();
             // ####### Diffuse reflection #######
@@ -32,7 +33,6 @@ public class ColorUtils {
             if (cosTheta < 0) {
               continue;
             }
-
             color.setRed(color.getRed() + (material.getDiffuseColor().getRed() * light.getColor().getRed() * cosTheta));
             color.setGreen(color.getGreen() + (material.getDiffuseColor().getGreen() * light.getColor().getGreen() * cosTheta));
             color.setBlue(color.getBlue() + (material.getDiffuseColor().getBlue() * light.getColor().getBlue() * cosTheta));
@@ -59,12 +59,12 @@ public class ColorUtils {
 
             // light_color = light_color * (1.0-light.shadow_intensity*no_shadow_rays/self.__settings.root_num_of_shadow_rays**2)
             double shadowIntensity = softShadow(intersectionPoint, light, L.multByScalar(-1), scene);
-            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity()) *
-                    shadowIntensity));
-            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity()) *
-                    shadowIntensity));
-            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity()) *
-                    shadowIntensity));
+            colorWithShadow.setRed(colorWithShadow.getRed() + color.getRed() * ((1 - light.getShadowIntensity())
+                    + light.getShadowIntensity() * shadowIntensity));
+            colorWithShadow.setGreen(colorWithShadow.getGreen() + color.getGreen() * ((1 - light.getShadowIntensity())
+                    + light.getShadowIntensity() * shadowIntensity));
+            colorWithShadow.setBlue(colorWithShadow.getBlue() + color.getBlue() * ((1 - light.getShadowIntensity())
+                    + light.getShadowIntensity() * shadowIntensity));
         }
 
         // Color transparencyColor
