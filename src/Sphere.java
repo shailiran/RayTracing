@@ -31,7 +31,8 @@ public class Sphere implements Surfaces {
     //Credit: https://stackoverflow.com/questions/8024898/calculate-the-vertex-normals-of-a-sphere
     @Override
     public Vector calcSurfaceNormal(Vector intersectionPoint) {
-        return intersectionPoint.subVectors(this.center).normalizeVector();
+        Vector normal = intersectionPoint.subVectors(this.center);
+        return normal.normalizeVector();
     }
 
     @Override

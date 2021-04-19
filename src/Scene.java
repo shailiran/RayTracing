@@ -6,6 +6,7 @@ public class Scene {
     private Camera camera;
     private Set set;
     private List<Surfaces> surfaces;
+    private List<Surfaces> transparencySurfaces;
     private List<Materials> materials;
     private List<Light> lights;
 
@@ -14,12 +15,17 @@ public class Scene {
         this.camera = camera;
         this.set = set;
         this.surfaces = surfaces;
+        this.transparencySurfaces = List.copyOf(surfaces);
         this.materials = materials;
         this.lights = lights;
     }
 
     public List<Surfaces> getSurfaces() {
         return this.surfaces;
+    }
+
+    public List<Surfaces> getTransparencySurfaces() {
+        return this.transparencySurfaces;
     }
     
     public boolean isValid() {

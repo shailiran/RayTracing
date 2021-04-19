@@ -160,6 +160,8 @@ public class RayTracer {
 
 		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(-0.5));
 		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
+//		Vector firstPixel = new Vector(-0.5, 8.591141964605509, -1.525532962844443);
+		Color background = set.getBackgroundColor();
 
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
@@ -171,24 +173,24 @@ public class RayTracer {
 				Ray ray = new Ray(camera.getPosition(), directionVector);
 
 				// Find intersection
-				Intersection intersection = Intersection.findIntersection(ray, scene);
+				Intersection intersection = Intersection.findIntersection(ray, scene, false);
 				// Color
 				if (intersection.getMinT() == Double.MAX_VALUE) {
 					// no intersection - need background color
-					color = set.getBackgroundColor();
+					color.setRed(background.getRed());
+					color.setGreen(background.getGreen());
+					color.setBlue(background.getBlue());
 				} else {
 					// has intersection
-					Materials material = scene.getMaterials().get(intersection.getMinSurface().getMaterialIndex()-1);
-					color.setRed(set.getBackgroundColor().getRed() * material.getTransparency() +
-							(material.getDiffuseColor().getRed() + material.getSpecularColor().getRed()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getRed());
-					color.setGreen(set.getBackgroundColor().getGreen() * material.getTransparency() +
-							(material.getDiffuseColor().getGreen() + material.getSpecularColor().getGreen()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getGreen());
-					color.setBlue(set.getBackgroundColor().getBlue() * material.getTransparency() +
-							(material.getDiffuseColor().getBlue() + material.getSpecularColor().getBlue()) * (1-material.getTransparency()) +
-							material.getReflectionColor().getBlue());
-					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
+					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene,
+							scene.getSet().getMaxRecursionLevel());
+
+					color.setRed(tmpColor.getRed());
+					color.setGreen(tmpColor.getGreen());
+					color.setBlue(tmpColor.getBlue());
+//
+//					System.out.println(11111);
+//					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
 				}
 
 				rgbData[(i * this.imageWidth + j) * 3] = (byte) (color.getRed() * 255);
@@ -219,6 +221,8 @@ public class RayTracer {
 		System.out.println("Saved file " + outputFileName);
 
 	}
+
+
 
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////

@@ -1,7 +1,7 @@
 package src;
 
 public class Set {
-    private Color backgroundColor;
+    private final Color backgroundColor;
     private int NumberOfShadowsRays;
     private int maxRecursionLevel;
 
@@ -22,5 +22,9 @@ public class Set {
 
     public int getNumberOfShadowsRays() {
         return NumberOfShadowsRays;
+    }
+
+    public void setMaxRecursionLevel(int maxRecursionLevel) {
+        this.maxRecursionLevel = maxRecursionLevel;
     }
 }

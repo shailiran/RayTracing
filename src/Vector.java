@@ -34,6 +34,8 @@ public class Vector {
         return z;
     }
 
+    public double getNorm() {return norm; }
+
 
 
 
