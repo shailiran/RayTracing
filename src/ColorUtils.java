@@ -13,7 +13,7 @@ public class ColorUtils {
         }
         //P = p_0 + tv
         Vector intersectionPoint = ray.getBase().addVectors((ray.getDirection()).multByScalar(intersection.getMinT()));
-        Vector N = intersection.getMinSurface().calcSurfaceNormal(intersectionPoint);
+        Vector N = intersection.getMinSurface().calcSurfaceNormal(intersectionPoint, ray);
 
         //checking if the angle between the N and the ray is greater than 90
         //and if so change the direction of N.
