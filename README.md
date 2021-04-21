@@ -1,6 +1,6 @@
 # Ray Tracing
 
-This project was built as part of "Graphics basics and image processing" course in Tel-Aviv University.
+This project was built as part of **"Fundamentals of Computer Graphics, Vision and Image Processing"** course in Tel-Aviv University.
 
 ## :page_with_curl: General description
 This is an implementation of a basic ray tracer in Java. A ray tracer shoots rays from the observer's eye (the camera) through a screen and into a scene which contains
