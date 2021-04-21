@@ -8,7 +8,8 @@ public class Camera {
     private Vector towardsVector;
     private double screenDistance;
     private double screenWidth;
-    private boolean fishEyeLens;
+    private boolean fishEyeLens = false;
+    private double K = 0.5;
 
     public Camera(String[] params) {
         this.position = new Vector(Double.parseDouble(params[0]),Double.parseDouble(params[1]),
@@ -19,7 +20,12 @@ public class Camera {
                 Double.parseDouble(params[8]));
         this.screenDistance = Double.parseDouble(params[9]);
         this.screenWidth = Double.parseDouble(params[10]);
-        this.fishEyeLens = Boolean.parseBoolean(params[11]);
+        if (params.length > 10) {
+            this.fishEyeLens = Boolean.parseBoolean(params[11]);
+            if (params.length > 11){
+                this.K = Double.parseDouble(params[12]);
+            }
+        }
 
 //        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
         this.towardsVector = lookAtPoint.subVectors(position);
@@ -64,4 +70,7 @@ public class Camera {
         return fishEyeLens;
     }
 
+    public double getK() {
+        return K;
+    }
 }

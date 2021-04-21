@@ -143,16 +143,15 @@ public class RayTracer {
 		// Create a byte array to hold the pixel data:
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
-		//credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
 		double pixelSize = camera.getScreenWidth() / imageWidth;
-		Vector screenCenter = camera.getPosition().addVectors(camera.getTowardsVector()
-				.multByScalar(camera.getScreenDistance())); // Center = position + towards * distance
+		boolean fishFlag =camera.isFishEyeLens();
 
 		// calc first pixel
 		double aspectRatio = imageHeight / imageWidth;
 		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
 		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 
+		//Center = position + towards * distance
 		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance()).addVectors(camera.getPosition());
 		Vector left = camera.getRightVector().multByScalar(-0.5 * camera.getScreenWidth());
 		Vector top = camera.getUpVector().multByScalar(0.5 * aspectRatio * camera.getScreenWidth());
@@ -166,14 +165,30 @@ public class RayTracer {
 		for (int i = 0; i < imageWidth; i++) {
 			Color color = new Color(0, 0, 0);
 			for (int j = 0; j < imageHeight; j++) {
+				Ray ray;
+				Intersection intersection;
+				Vector directionVector;
 				// Construct ray through pixel
 				Vector move = delta_y.multByScalar(-j).addVectors(delta_x.multByScalar(i));
 				Vector currentPixel = firstPixel.addVectors(move);
-				Vector directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
-				Ray ray = new Ray(camera.getPosition(), directionVector);
-
+				// Without fish eye
+				if (!fishFlag) {
+					directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
+				}
+				else { // Fish eye
+					//Vector v = new Vector(-0.499, 1.690130580770394, -1.4971567219740203);//TODO: delete
+					 directionVector = FishEye.calcFishEyeRayDirection(currentPixel, center, scene);
+					 if (directionVector == null) {
+						 rgbData[(i * this.imageWidth + j) * 3] = (byte) (0);
+						 rgbData[(i * this.imageWidth + j) * 3 + 1] = (byte) (0);
+						 rgbData[(i * this.imageWidth + j) * 3 + 2] = (byte) (0);
+						 continue;
+					 }
+				}
+				ray = new Ray(camera.getPosition(), directionVector);
 				// Find intersection
-				Intersection intersection = Intersection.findIntersection(ray, scene, false);
+				intersection = Intersection.findIntersection(ray, scene, false);
+
 				// Color
 				if (intersection.getMinT() == Double.MAX_VALUE) {
 					// no intersection - need background color

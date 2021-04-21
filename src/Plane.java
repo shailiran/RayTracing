@@ -29,11 +29,17 @@ public class Plane implements Surfaces {
         Vector res = new Vector(1,1, z);
         return res;
     }
+    public boolean isVectorOnPlane(Vector v) {
+        if (v.dotProduct(normal) == offset) {
+            return true;
+        }
+        return false;
+    }
 
 
     @Override
     public double intersection(Ray ray) {
-        double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));//TODO: *-1?
+        double t = -1 * (ray.getBase().dotProduct(normal) + offset) / (ray.getDirection().dotProduct(normal));
         return t;
     }
 
@@ -45,5 +51,13 @@ public class Plane implements Surfaces {
     @Override
     public int getMaterialIndex() {
         return materialIndex;
+    }
+
+    public double getOffset() {
+        return offset;
+    }
+
+    public Vector getNormal() {
+        return normal;
     }
 }

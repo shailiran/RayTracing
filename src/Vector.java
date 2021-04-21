@@ -56,6 +56,14 @@ public class Vector {
         return addVector;
     }
 
+    public double distanceBetweenVectors(Vector v) {
+        double res = 0;
+        res += Math.pow(this.x - v.x, 2);
+        res += Math.pow(this.y - v.y, 2);
+        res += Math.pow(this.z - v.z, 2);
+        return Math.sqrt(res);
+    }
+
     public Vector multByScalar(double s) {
         Vector res = new Vector();
         double x = this.x * s;
