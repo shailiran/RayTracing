@@ -137,6 +137,7 @@ public class RayTracer {
 	 * Renders the loaded scene and saves it to the specified file location.
 	 */
 	public void renderScene(String outputFileName) {
+		System.out.println("Starting render");
 		long startTime = System.currentTimeMillis();
 
 		// Create a byte array to hold the pixel data:
@@ -180,7 +181,7 @@ public class RayTracer {
 					}
 				} else {
 					// Without fish eye
-					directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
+					directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector(); // TODO - normalize
 				}
 				ray = new Ray(camera.getPosition(), directionVector);
 

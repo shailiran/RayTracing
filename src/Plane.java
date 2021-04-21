@@ -5,6 +5,8 @@ public class Plane implements Surfaces {
     private double offset;
     private int materialIndex;
 
+    public Plane(){}
+
     public Plane(String [] params) {
         this.normal = new Vector(Double.parseDouble(params[0]), Double.parseDouble(params[1]),
                 Double.parseDouble(params[2]));
@@ -12,6 +14,7 @@ public class Plane implements Surfaces {
         this.offset = Double.parseDouble(params[3]) * -1;
         this.materialIndex = Integer.parseInt(params[4]);
     }
+
     public Plane (Vector normal, double offset, int materialIndex) {
         this.normal = normal.normalizeVector();
         this.offset = offset * -1;
@@ -44,7 +47,7 @@ public class Plane implements Surfaces {
     }
 
     @Override
-    public Vector calcSurfaceNormal(Vector intersectionPoint) {
+    public Vector calcSurfaceNormal(Vector intersectionPoint, Ray ray) {
         return this.normal.normalizeVector();
     }
 

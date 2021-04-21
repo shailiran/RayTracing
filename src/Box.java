@@ -1,76 +1,148 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Box implements Surfaces {
     private Vector center;
     private double edgeLen;
     private int materialIndex;
-    private Plane[] boxPlanes = new Plane[6];
+    private Plane planeYZ1;
+    private Plane planeYZ2;
+    private Plane planeXZ1;
+    private Plane planeXZ2;
+    private Plane planeXY1;
+    private Plane planeXY2;
+    private Plane[] boxPlanes;
 
-    public Box(String [] params) {
+    public Box(String[] params) {
         this.center = new Vector(Double.parseDouble(params[0]), Double.parseDouble(params[1]),
                 Double.parseDouble(params[2]));
         this.edgeLen = Double.parseDouble(params[3]);
         this.materialIndex = Integer.parseInt(params[4]);
         findBoxPlanes();
     }
+
     public void findBoxPlanes() {
-        Vector normalX = new Vector(1,0,0);
-        Vector normalY = new Vector(0,1,0);
-        Vector normalZ = new Vector(0,0,1);
+        Vector normalX = new Vector(1, 0, 0);
+        Vector normalY = new Vector(0, 1, 0);
+        Vector normalZ = new Vector(0, 0, 1);
         double offset;
 
         offset = this.center.getX() + 0.5 * edgeLen;
-        Plane planeYZ1 = new Plane(normalX, offset, this.materialIndex);
-        boxPlanes[0] = planeYZ1;
+        planeYZ1 = new Plane(normalX, offset, this.materialIndex);
 
         offset = this.center.getX() - 0.5 * edgeLen;
-        Plane planeYZ2 = new Plane(normalX, offset, this.materialIndex);
-        boxPlanes[1] = planeYZ2;
+        planeYZ2 = new Plane(normalX, offset, this.materialIndex);
 
         offset = this.center.getY() + 0.5 * edgeLen;
-        Plane planeXZ1 = new Plane(normalY, offset, this.materialIndex);
-        boxPlanes[2] = planeXZ1;
+        planeXZ1 = new Plane(normalY, offset, this.materialIndex);
 
         offset = this.center.getY() - 0.5 * edgeLen;
-        Plane planeXZ2 = new Plane(normalY, offset, this.materialIndex);
-        boxPlanes[3] = planeXZ2;
+        planeXZ2 = new Plane(normalY, offset, this.materialIndex);
 
         offset = this.center.getZ() + 0.5 * edgeLen;
-        Plane planeXY1 = new Plane(normalZ, offset, this.materialIndex);
-        boxPlanes[4] = planeXY1;
+        planeXY1 = new Plane(normalZ, offset, this.materialIndex);
 
         offset = this.center.getZ() - 0.5 * edgeLen;
-        Plane planeXY2 = new Plane(normalZ, offset, this.materialIndex);
-        boxPlanes[5] = planeXY2;
+        planeXY2 = new Plane(normalZ, offset, this.materialIndex);
 
+        boxPlanes = new Plane[]{planeYZ1, planeYZ2, planeXZ1, planeXZ2, planeXY1, planeXY2};
     }
+
+//    @Override
+//    public double intersection(Ray ray) {
+//        double minT = Double.MAX_VALUE;
+//        double tmpT;
+//        for (Plane plane: boxPlanes) {
+//            tmpT = plane.intersection(ray);
+//            if (tmpT < minT && tmpT > 0) {
+//                if ()
+//                minT = tmpT;
+//            }
+//        }
+
+
+
 
     @Override
     public double intersection(Ray ray) {
-        int i = 0;
-        double[] intersectionsArr = new double[6];
-        for (Plane plane: boxPlanes) {
-            intersectionsArr[i] = plane.intersection(ray);
-            i++;
+        double maxT = Math.abs(Double.MIN_VALUE);
+        double minT = Double.MAX_VALUE;
+        Plane entryX, leaveX, entryY, leaveY, entryZ, leaveZ;
+
+        if (ray.getDirection().getX() >= 0) {
+            entryX = planeYZ2;
+            leaveX = planeYZ1;
+        } else {
+            entryX =  planeYZ1;
+            leaveX = planeYZ2;
         }
-        Arrays.sort(intersectionsArr);
+        double tEntryX = entryX.intersection(ray);
+        if (tEntryX > maxT) {
+            maxT = tEntryX;
+        }
+        double tLeaveX = leaveX.intersection(ray);
+        if (tLeaveX < minT) {
+            minT = tLeaveX;
+        }
 
+        if (ray.getDirection().getY() >= 0) {
+            entryY = planeXZ2;
+            leaveY = planeXZ1;
+        } else {
+            entryY = planeXZ1;
+            leaveY = planeXZ2;
+        }
+        double tEntryY = entryY.intersection(ray);
+        if (tEntryY > maxT) {
+            maxT = tEntryY;
+        }
+        double tLeaveY = leaveY.intersection(ray);
+        if (tLeaveY < minT) {
+            minT = tLeaveY;
+        }
 
-        return 0;
+        if (ray.getDirection().getZ() >= 0) {
+            entryZ = planeXY2;
+            leaveZ = planeXY1;
+        } else {
+            entryZ = planeXY1;
+            leaveZ = planeXY2;
+        }
+        double tEntryZ = entryZ.intersection(ray);
+        if (tEntryZ > maxT) {
+            maxT = tEntryZ;
+        }
+        double tLeaveZ = leaveZ.intersection(ray);
+        if (tLeaveZ < minT) {
+            minT = tLeaveZ;
+        }
+
+        if (maxT == Math.abs(Double.MIN_VALUE)) {
+            return -1;
+        }
+        if (minT == Double.MAX_VALUE) {
+            return -1;
+        }
+        if (maxT < minT) {
+            return maxT;
+        }
+        return -1;
     }
 
     @Override
-    public Vector calcSurfaceNormal(Vector intersectionPoint) {
+    public Vector calcSurfaceNormal(Vector intersectionPoint, Ray ray) {
+        double minT = Double.MAX_VALUE;
+        double tmpT;
+        Plane minPlane = new Plane();
         for (Plane plane: boxPlanes) {
-            if (plane.isVectorOnPlane(intersectionPoint)) {
-                return plane.getNormal();
+            tmpT = plane.intersection(ray);
+            if (tmpT < minT && tmpT > 0) {
+                minT = tmpT;
+                minPlane = plane;
             }
         }
-        return null;
+        return minPlane.getNormal();
     }
 
     @Override
@@ -78,34 +150,4 @@ public class Box implements Surfaces {
         return materialIndex;
     }
 }
-//
-//    public static AbstractMap<Hit, Plane> FindPlaneHitsForBox(Ray ray, List<Plane> planes, int index) {
-//        AbstractMap<Hit, Plane> res = new HashMap<>();
-//        for(Plane pln: planes){
-//            double a = Vector.DotProduct(pln.Normal, ray.Direction);
-//            if(Math.abs(a)< 0.001){continue;}//the ray is unified or parallel to the plane
-//            Vector temp = Vector.ScalarMultiply(pln.Normal, pln.Offset);
-//            temp = Vector.VectorSubtraction(temp, ray.Origin);
-//            double t = (Vector.DotProduct(pln.Normal, temp)) / a;
-//            if(t<0){continue;}
-//            Vector hitPoint = ray.tPointOnRay(t);
-//            Hit hit = new Hit(hitPoint, Shapes.Plane, index);
-//            res.put(hit, pln);
-//        }
-//        return res;
-//    }
-//
-//    public static Hit FindClosest(List<Hit> hits, Vector origin){
-//        double dist = Double.MAX_VALUE;
-//        Hit res = null;
-//        for (Hit hit : hits) {
-//            if (hit.HitPoint == null)
-//                continue;
-//            double d = Vector.Distance(hit.HitPoint, origin);
-//            if (d < dist) {
-//                dist = d;
-//                res = hit;
-//            }
-//        }
-//        return res;
-//    }
+
