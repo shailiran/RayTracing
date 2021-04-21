@@ -165,7 +165,7 @@ public class ColorUtils {
 //      2. Define a rectangle on that plane, centered at the light source and as wide as the
 //         defined light radius.
         Vector tmp = lightPlane.calcVectorOnThePlane();
-        Vector v = tmp.addVectors(light.getPosition().multByScalar(-1));//TODO: Inside - mult by (-1)
+        Vector v = tmp.addVectors(light.getPosition().multByScalar(-1));
         //Vector v = planeNormal.crossProduct(tmp).normalizeVector();
         v.normalizeInPlace();
         Vector u = planeNormal.crossProduct(v).normalizeVector();

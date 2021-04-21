@@ -1,6 +1,7 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Box implements Surfaces {
@@ -14,6 +15,7 @@ public class Box implements Surfaces {
                 Double.parseDouble(params[2]));
         this.edgeLen = Double.parseDouble(params[3]);
         this.materialIndex = Integer.parseInt(params[4]);
+        findBoxPlanes();
     }
     public void findBoxPlanes() {
         Vector normalX = new Vector(1,0,0);
@@ -49,15 +51,25 @@ public class Box implements Surfaces {
 
     @Override
     public double intersection(Ray ray) {
-        findBoxPlanes();
+        int i = 0;
+        double[] intersectionsArr = new double[6];
         for (Plane plane: boxPlanes) {
-
+            intersectionsArr[i] = plane.intersection(ray);
+            i++;
         }
+        Arrays.sort(intersectionsArr);
+
+
         return 0;
     }
 
     @Override
     public Vector calcSurfaceNormal(Vector intersectionPoint) {
+        for (Plane plane: boxPlanes) {
+            if (plane.isVectorOnPlane(intersectionPoint)) {
+                return plane.getNormal();
+            }
+        }
         return null;
     }
 
