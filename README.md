@@ -36,5 +36,5 @@ The rendered scene (.png file).
 ## :dart: Results
 
 ## :ok_woman: Team Members
-Rotem Brooks - 
+Rotem Brooks -  <br/>
 Shai Liran - shailiran@gmail.com
