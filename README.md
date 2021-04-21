@@ -16,11 +16,11 @@ For example:
 java -jar RayTrace.jar scenes\Spheres.txt scenes\Spheres.png 500 500
 ```
 The scenes are defined in text scene files with the following format: 
-  1. Every line in the file defines a single object in the scene, and starts with a 3 letter code that identifies the object type. 
-  2. After the 3 letter code a list of numeric parameters is given. 
-  3. The parameters can be delimited by any number of white space characters, and are parsed according to the 
+  * Every line in the file defines a single object in the scene, and starts with a 3 letter code that identifies the object type. 
+  * After the 3 letter code a list of numeric parameters is given. 
+  * The parameters can be delimited by any number of white space characters, and are parsed according to the 
      specific order in which they appear. Empty lines are discarded, and so are lines which begin with the character "#" which are used for remarks. 
-  4. The possible objects with their code and list of required parameters are given in the following file: TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+  * The possible objects with their code and list of required parameters are given in the following file: TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     
 
 ## :outbox_tray: Output
@@ -40,5 +40,5 @@ The rendered scene (.png file).
 ## :dart: Results
 
 ## :ok_woman: Team Members
-Rotem Brooks -  <br/>
+Rotem Brooks -  rotembr10@gmail.com <br/>
 Shai Liran - shailiran@gmail.com
