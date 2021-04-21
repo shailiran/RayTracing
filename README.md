@@ -10,13 +10,17 @@ and lighting conditions.
 ## :inbox_tray: Input 
 The input file represent a scene. 
 The first parameter is the scene file, and the second is the name of the image file to write. Those two are mandatory. 
-The next two parameters are optional and define the image width and height, respectively. The default size is set to 500x500.
+The next two parameters are optional and define the image width and height, respectively. The default size is set to 500x500.<br/>
+For example:
+```
+java -jar RayTrace.jar scenes\Spheres.txt scenes\Spheres.png 500 500
+```
 The scenes are defined in text scene files with the following format: 
   1. Every line in the file defines a single object in the scene, and starts with a 3 letter code that identifies the object type. 
   2. After the 3 letter code a list of numeric parameters is given. 
   3. The parameters can be delimited by any number of white space characters, and are parsed according to the 
      specific order in which they appear. Empty lines are discarded, and so are lines which begin with the character "#" which are used for remarks. 
-  4. The possible objects with their code and list of required parameters are given below: TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+  4. The possible objects with their code and list of required parameters are given in the following file: TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     
 
 ## :outbox_tray: Output
