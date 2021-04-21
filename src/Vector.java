@@ -36,9 +36,6 @@ public class Vector {
 
     public double getNorm() {return norm; }
 
-
-
-
     private double calcNorm(double x, double y, double z){
         double sum, res;
         sum = Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2) ;
@@ -73,7 +70,6 @@ public class Vector {
         res.setY(y);
         res.setZ(z);
         res.norm = calcNorm(x,y,z);
-
         return res;
     }
 
@@ -113,14 +109,7 @@ public class Vector {
         return sum;
     }
 
-    public double calcAngle(Vector v) {
-        double res;
-        double dotProductV = this.dotProduct(v);
-        res = Math.acos(dotProductV / (this.norm * v.norm));
-        return res;
-    }
-
-    //the next equation is from wikipedia: https://en.wikipedia.org/wiki/Cross_product
+    // The next equation is from wikipedia: https://en.wikipedia.org/wiki/Cross_product
     public Vector crossProduct (Vector v) {
        Vector cross = new Vector();
        double x = this.y*v.z - this.z*v.y;
@@ -130,7 +119,6 @@ public class Vector {
        cross.setY(y);
        cross.setZ(z);
        cross.norm = calcNorm(x, y, z);
-
        return cross;
     }
 

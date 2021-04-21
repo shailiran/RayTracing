@@ -49,21 +49,6 @@ public class Box implements Surfaces {
         boxPlanes = new Plane[]{planeYZ1, planeYZ2, planeXZ1, planeXZ2, planeXY1, planeXY2};
     }
 
-//    @Override
-//    public double intersection(Ray ray) {
-//        double minT = Double.MAX_VALUE;
-//        double tmpT;
-//        for (Plane plane: boxPlanes) {
-//            tmpT = plane.intersection(ray);
-//            if (tmpT < minT && tmpT > 0) {
-//                if ()
-//                minT = tmpT;
-//            }
-//        }
-
-
-
-
     @Override
     public double intersection(Ray ray) {
         double maxT = Math.abs(Double.MIN_VALUE);

@@ -32,13 +32,6 @@ public class Plane implements Surfaces {
         Vector res = new Vector(1,1, z);
         return res;
     }
-    public boolean isVectorOnPlane(Vector v) {
-        if (v.dotProduct(normal) == offset) {
-            return true;
-        }
-        return false;
-    }
-
 
     @Override
     public double intersection(Ray ray) {

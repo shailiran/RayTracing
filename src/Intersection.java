@@ -4,12 +4,10 @@ import java.util.List;
 public class Intersection {
     private double minT;
     private Surfaces minSurface;
-    private boolean hasIntersection;
 
     public Intersection(double minT, Surfaces minSurface, boolean hasIntersection) {
         this.minT = minT;
         this.minSurface = minSurface;
-        this.hasIntersection = hasIntersection;
     }
 
     public double getMinT() {
@@ -18,10 +16,6 @@ public class Intersection {
 
     public Surfaces getMinSurface() {
         return minSurface;
-    }
-
-    public boolean getHasIntersection() {
-        return this.hasIntersection;
     }
 
     public static Intersection findIntersection(Ray ray, Scene scene, boolean flagTransparency) {
@@ -56,6 +50,4 @@ public class Intersection {
         }
         return false;
     }
-
-
 }

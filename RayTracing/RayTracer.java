@@ -34,7 +34,7 @@ public class RayTracer {
 	public static void main(String[] args) {
 		try {
 			RayTracer tracer = new RayTracer();
-                        // Default values:
+			// Default values:
 			tracer.imageWidth = 500;
 			tracer.imageHeight = 500;
 
@@ -55,8 +55,8 @@ public class RayTracer {
 			// Render scene:
 			tracer.renderScene(outputFileName);
 
-//		} catch (IOException e) {
-//			System.out.println(e.getMessage());
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
 		} catch (RayTracerException e) {
 			System.out.println(e.getMessage());
 		} catch (Exception e) {
@@ -137,7 +137,6 @@ public class RayTracer {
 	 * Renders the loaded scene and saves it to the specified file location.
 	 */
 	public void renderScene(String outputFileName) {
-		System.out.println("Starting render");
 		long startTime = System.currentTimeMillis();
 
 		// Create a byte array to hold the pixel data:
@@ -146,12 +145,12 @@ public class RayTracer {
 		double pixelSize = camera.getScreenWidth() / imageWidth;
 		boolean fishFlag =camera.isFishEyeLens();
 
-		// calc first pixel
+		// Calc first pixel
 		double aspectRatio = (double) imageHeight / (double) imageWidth;
 		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
 		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 
-		//Center = position + towards * distance
+		// Center = position + towards * distance
 		Vector center = camera.getTowardsVector().multByScalar(camera.getScreenDistance()).addVectors(camera.getPosition());
 		Vector left = camera.getRightVector().multByScalar(-0.5 * camera.getScreenWidth());
 		Vector top = camera.getUpVector().multByScalar(0.5 * aspectRatio * camera.getScreenWidth());
@@ -190,12 +189,12 @@ public class RayTracer {
 
 				// Color
 				if (intersection.getMinT() == Double.MAX_VALUE) {
-					// no intersection - need background color
+					// No intersection - need background color
 					color.setRed(background.getRed());
 					color.setGreen(background.getGreen());
 					color.setBlue(background.getBlue());
 				} else {
-					// has intersection
+					// Has intersection
 					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene,
 							scene.getSet().getMaxRecursionLevel());
 					color.setRed(tmpColor.getRed());

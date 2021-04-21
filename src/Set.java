@@ -23,8 +23,4 @@ public class Set {
     public int getNumberOfShadowsRays() {
         return NumberOfShadowsRays;
     }
-
-    public void setMaxRecursionLevel(int maxRecursionLevel) {
-        this.maxRecursionLevel = maxRecursionLevel;
-    }
 }

@@ -29,6 +29,4 @@ public class FishEye {
         }
         return theta;
     }
-
-
 }
