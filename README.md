@@ -11,7 +11,7 @@ and lighting conditions.
 The input file represent a scene. 
 The first parameter is the scene file, and the second is the name of the image file to write. Those two are mandatory. 
 The next two parameters are optional and define the image width and height, respectively. The default size is set to 500x500.<br/>
-For example:
+You can run the code in the command line. For example:
 ```
 java -jar RayTrace.jar scenes\Spheres.txt scenes\Spheres.png 500 500
 ```
