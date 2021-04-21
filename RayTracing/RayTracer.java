@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import javax.imageio.ImageIO;
 
 /**
@@ -147,7 +146,7 @@ public class RayTracer {
 		boolean fishFlag =camera.isFishEyeLens();
 
 		// calc first pixel
-		double aspectRatio = imageHeight / imageWidth;
+		double aspectRatio = (double) imageHeight / (double) imageWidth;
 		Vector delta_x = camera.getRightVector().multByScalar(pixelSize);
 		Vector delta_y = camera.getUpVector().multByScalar(pixelSize);
 
@@ -159,33 +158,32 @@ public class RayTracer {
 
 		Vector firstPixel = topLeft.addVectors(delta_y.multByScalar(-0.5));
 		firstPixel = firstPixel.addVectors(delta_x.multByScalar(0.5));
-//		Vector firstPixel = new Vector(-0.5, 8.591141964605509, -1.525532962844443);
 		Color background = set.getBackgroundColor();
-
+		Color color = new Color(0, 0, 0);
 		for (int i = 0; i < imageWidth; i++) {
-			Color color = new Color(0, 0, 0);
+			color.setToZero();
 			for (int j = 0; j < imageHeight; j++) {
+				// Construct ray through pixel
 				Ray ray;
 				Intersection intersection;
 				Vector directionVector;
-				// Construct ray through pixel
 				Vector move = delta_y.multByScalar(-j).addVectors(delta_x.multByScalar(i));
 				Vector currentPixel = firstPixel.addVectors(move);
-				// Without fish eye
-				if (!fishFlag) {
+				if (fishFlag) {
+					// Fisheye
+					directionVector = FishEye.calcFishEyeRayDirection(currentPixel, center, scene);
+					if (directionVector == null) {
+						rgbData[(i * this.imageWidth + j) * 3] = (byte) (0);
+						rgbData[(i * this.imageWidth + j) * 3 + 1] = (byte) (0);
+						rgbData[(i * this.imageWidth + j) * 3 + 2] = (byte) (0);
+						continue;
+					}
+				} else {
+					// Without fish eye
 					directionVector = currentPixel.subVectors(camera.getPosition()).normalizeVector();
 				}
-				else { // Fish eye
-					//Vector v = new Vector(-0.499, 1.690130580770394, -1.4971567219740203);//TODO: delete
-					 directionVector = FishEye.calcFishEyeRayDirection(currentPixel, center, scene);
-					 if (directionVector == null) {
-						 rgbData[(i * this.imageWidth + j) * 3] = (byte) (0);
-						 rgbData[(i * this.imageWidth + j) * 3 + 1] = (byte) (0);
-						 rgbData[(i * this.imageWidth + j) * 3 + 2] = (byte) (0);
-						 continue;
-					 }
-				}
 				ray = new Ray(camera.getPosition(), directionVector);
+
 				// Find intersection
 				intersection = Intersection.findIntersection(ray, scene, false);
 
@@ -199,46 +197,26 @@ public class RayTracer {
 					// has intersection
 					Color tmpColor = ColorUtils.calcColor(intersection, ray, scene,
 							scene.getSet().getMaxRecursionLevel());
-
 					color.setRed(tmpColor.getRed());
 					color.setGreen(tmpColor.getGreen());
 					color.setBlue(tmpColor.getBlue());
-//
-//					System.out.println(11111);
-//					System.out.println(color.getRed()+ "    " + color.getGreen()  +"   "+ color.getBlue());
 				}
-
 				rgbData[(i * this.imageWidth + j) * 3] = (byte) (color.getRed() * 255);
 				rgbData[(i * this.imageWidth + j) * 3 + 1] = (byte) (color.getGreen() * 255);
 				rgbData[(i * this.imageWidth + j) * 3 + 2] = (byte) (color.getBlue() * 255);
-
 			}
 		}
-
-		// Put your ray tracing code here!
-		//
-		// Write pixel color values in RGB format to rgbData:
-		// Pixel [x, y] red component is in rgbData[(y * this.imageWidth + x) * 3]
-		//            green component is in rgbData[(y * this.imageWidth + x) * 3 + 1]
-		//             blue component is in rgbData[(y * this.imageWidth + x) * 3 + 2]
-		//
-		// Each of the red, green and blue components should be a byte, i.e. 0-255
-
 
 		long endTime = System.currentTimeMillis();
 		Long renderTime = endTime - startTime;
 
 		System.out.println("Finished rendering scene in " + renderTime.toString() + " milliseconds.");
 
-    // This is already implemented, and should work without adding any code.
+    	// This is already implemented, and should work without adding any code.
 		saveImage(this.imageWidth, rgbData, outputFileName);
 
 		System.out.println("Saved file " + outputFileName);
-
 	}
-
-
-
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
 

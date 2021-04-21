@@ -20,16 +20,15 @@ public class Camera {
                 Double.parseDouble(params[8]));
         this.screenDistance = Double.parseDouble(params[9]);
         this.screenWidth = Double.parseDouble(params[10]);
-        if (params.length > 10) {
+        if (params.length > 11) {
             this.fishEyeLens = Boolean.parseBoolean(params[11]);
-            if (params.length > 11){
+            if (params.length > 12){
                 this.K = Double.parseDouble(params[12]);
             }
         }
 
-//        //credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
+        // credit: https://en.wikipedia.org/wiki/Ray_tracing_(graphics)
         this.towardsVector = lookAtPoint.subVectors(position);
-//        this.towardsVector = lookAtPoint;
         this.towardsVector.normalizeInPlace();
         this.upVector = towardsVector.crossProduct(upVector);
         this.upVector.normalizeInPlace();
