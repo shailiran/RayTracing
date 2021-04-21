@@ -20,7 +20,7 @@ The scenes are defined in text scene files with the following format:
   * After the 3 letter code a list of numeric parameters is given. 
   * The parameters can be delimited by any number of white space characters, and are parsed according to the 
      specific order in which they appear. Empty lines are discarded, and so are lines which begin with the character "#" which are used for remarks. 
-  * The possible objects with their code and list of required parameters are given in the following file: TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+  * The possible objects with their code and list of required parameters are given [here](images/input.txt).
     
 
 ## :outbox_tray: Output
