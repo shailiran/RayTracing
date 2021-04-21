@@ -33,3 +33,8 @@ The rendered scene (.png file).
 * **Fisheye Model**: The fisheye lenses give an artistic effect to images. A fisheye lens that is positioned at the camera position, “deforms” the incoming rays from the image plane, therefore we should account for that deformation with regards to the sensor plane.
 
 ## 🎆 Results
+## :dart: Results
+
+## :ok_woman: Team Members
+Rotem Brooks - 
+Shai Liran - shailiran@gmail.com
