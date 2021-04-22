@@ -11,10 +11,7 @@ and lighting conditions.
 The input file represent a scene. 
 The first parameter is the scene file, and the second is the name of the image file to write. Those two are mandatory. 
 The next two parameters are optional and define the image width and height, respectively. The default size is set to 500x500.<br/>
-You can run the code in the command line. For example:
-```
-java -jar RayTrace.jar scenes\Spheres.txt scenes\Spheres.png 500 500
-```
+
 The scenes are defined in text scene files with the following format: 
   * Every line in the file defines a single object in the scene, and starts with a 3 letter code that identifies the object type. 
   * After the 3 letter code a list of numeric parameters is given. 
@@ -25,6 +22,12 @@ The scenes are defined in text scene files with the following format:
 
 ## :outbox_tray: Output
 The rendered scene (.png file).
+
+## :arrow_forward: Execution Instructions
+You can run the code in the command line. For example:
+```
+java -jar RayTrace.jar scenes\Spheres.txt scenes\Spheres.png 500 500
+```
 
 ## :sunrise: Surfaces
 * **Spheres** - Each sphere is defined by the position of its center and its radius
